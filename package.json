@@ -1,5 +1,5 @@
 {
-  "name": "driven-all-articles-back",
+  "name": "projeto16-boardcamp",
   "version": "1.0.0",
   "description": "",
   "type": "module",
@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/luiz-gustavo-alves/Driven-all-articles.git"
+    "url": "git+https://github.com/monique282/projeto16-boardcamp.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/luiz-gustavo-alves/Driven-all-articles/issues"
+    "url": "https://github.com/monique282/projeto16-boardcamp/issues"
   },
-  "homepage": "https://github.com/luiz-gustavo-alves/Driven-all-articles#readme",
+  "homepage": "https://github.com/monique282/projeto16-boardcamp#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
