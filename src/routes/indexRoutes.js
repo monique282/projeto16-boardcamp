@@ -2,16 +2,12 @@
 // lebrando que todas as Rotas aqui vai pro app
 
 import { Router } from "express";
-import authRouter from "./auth.route.js";
-import productsRouter from "./products.route.js";
-import shoppingCartRouter from "./shoppingCart.route.js";
+import gameRouter from "./game.route.js";
 
 const router = Router()
 
 router.use([
-    authRouter, 
-    productsRouter,
-    shoppingCartRouter
+    gameRouter
 ]);
 
 export default router;

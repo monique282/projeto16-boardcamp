@@ -1,11 +1,9 @@
 import { Router } from "express";
-import { validateSchema } from "../middlewares/validateSchema.js";
-import { signInSchema, signUpSchema } from "../schemas/auth.schema.js";
-import { gameTable } from "../schemas/game.schema.js";
+import { game } from "../controllers/controlGame.js";
 
-const authRouter = Router();
+const gameRouter = Router();
 
-authRouter.get("/games", validateSchema(gameTable));
+gameRouter.get("/games", game);
 
 
-export default authRouter;
+export default gameRouter;
