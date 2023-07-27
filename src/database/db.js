@@ -1,19 +1,13 @@
-/* Connection to mongoClient database */
-import { MongoClient } from "mongodb";
+/* conectando o pg */
+import pg, { Pool } from "pg";
 import dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config()
 
-const mongoClient = new MongoClient(process.env.DATABASE_URL);
+const { Pool } = pg
 
-export async function connectToDatabase() {
-    try {
-        await mongoClient.connect();
-        console.log("Conectado com banco de dados.");
-    } catch (err) {
-        console.log(err.message);
-    }
+const configDatabase = {
+    connectionString:process.env.DATABASE_URL
 }
 
-const db = mongoClient.db();
-export default db;
+const db = new Pool(configDatabase)

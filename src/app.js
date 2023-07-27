@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-
 import { connectToDatabase } from "./database/db.js";
 import router from "./routes/indexRoutes.js";
 
@@ -10,12 +9,12 @@ dotenv.config();
 connectToDatabase();
 
 const app = express();
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 app.use(router)
 
-/* Entrypoints (rotas) */
-app.use(router);
 
-const PORT = 5000;
+
+const PORT = process.env.PORT || 5000;
+// cerve pra deixar a aplicação ligada na porta escolhida
 app.listen(PORT, () => console.log(`Servidor rodando na porta: ${PORT}`));
