@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { game } from "../controllers/controlGame.js";
+import { gameGet } from "../controllers/controlGame.js";
+
 
 const gameRouter = Router();
 
-gameRouter.get("/games", game);
+gameRouter.get("/games", gameGet);
 
 
 export default gameRouter;
