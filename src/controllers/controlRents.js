@@ -59,12 +59,18 @@ export async function rentsPost(req, res) {
         if (daysRented <= 0) {
             return res.sendStatus(400);
         }
-        
+
         // enviar a data atual no rendDate
         const rentDate = dayjs().format('DD/MM/AAAA');
        
         // pegar a dada de quando foi devolvido na rota de finalizar pedido
         const returnDate = null;
+
+        // pegando a lista de jogos
+        const result = await db.query(`SELECT * FROM games WHERE id=$1;`, [gameId]);
+        // salvando o valor do jogo
+        const originalPrice = result.pricePerDay;
+
 
         // se tivertudo certo enviar para o Api
         const insertRentals = await db.query(`
