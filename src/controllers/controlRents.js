@@ -2,6 +2,8 @@
 // esse arquivo é chamado la em rentsRoutes
 
 import { db } from "../database/db.js";
+import dayjs from 'dayjs';
+
 
 // essa função aqui é enviado por um get para pegar a lista de alugueis
 export async function rentsGet(req, res) {
@@ -53,21 +55,22 @@ export async function rentsPost(req, res) {
             return res.sendStatus(409);
         }
 
-        // verificar se o cpf ja foi cadastrado
-        let cpfExists = false;
-        listCustomers.rows.forEach(customer => {
-            if (customer.cpf === cpf) {
-                cpfExists = true;
-                return;
-            }
-        });
-        if (cpfExists) {
-            return res.sendStatus(409);
+        // verificar se daysRented é maior que 0
+        if (daysRented <= 0) {
+            return res.sendStatus(400);
         }
+        // enviar a data atual no rendDate
+        const rentDate = dayjs().format('DD/MM/AAAA');
+       
+        // pegar a dada de quando foi devolvido na rota de finalizar pedido
+        const returnDate = null;
+
         // se tivertudo certo enviar para o Api
-        const insertCustomers = await db.query(`
-            INSERT INTO customers (name, phone, cpf, birthday) VAlUES ($1, $2, $3, $4);
-            ` , [name, phone, cpf, birthday]);
+        const insertRentals = await db.query(`
+            INSERT INTO rentals (customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee) VAlUES ($1, $2, $3, $4);
+            ` , [customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee]);
+
+    
         return res.sendStatus(201);
 
     } catch (err) {
