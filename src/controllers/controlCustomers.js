@@ -54,7 +54,7 @@ export async function customersGetId(req, res) {
     } catch (err) {
         res.status(500).send(err.message)
     }
-}
+};
 
 // essa função aqui é enviado por um post para crir a lista de cliente
 

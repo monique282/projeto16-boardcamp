@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { customersGet, customersGetId, customersPost } from "../controllers/controlCustomers.js";
 import { customersTable } from "../schemas/customersSchema.js";
+import { validateJoiForAll } from "../middlewares/validateSchema.js";
 
 
 
