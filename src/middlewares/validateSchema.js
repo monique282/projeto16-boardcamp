@@ -9,7 +9,7 @@ export function validateJoiForAll(joi) {
         // o abortEarly serve pra procurar todos os requisitos que nao passou no joi
         if (validarSeTaCerto.error) {
             const erroEspecifico = validarSeTaCerto.error.details.map(qual => qual.message);
-            return res.status(422).send(erroEspecifico);
+            return res.status(400).send(erroEspecifico);
         }
         next();
     }
