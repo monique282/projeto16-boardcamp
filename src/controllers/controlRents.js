@@ -17,16 +17,17 @@ export async function rentsGet(req, res) {
 
 export async function rentsPost(req, res) {
     // pegar os dados que a pessoa colocou na tela de alugueis
-    const { customerId, gameId, daysRented} = req.body;
-    
+    const { customerId, gameId, daysRented } = req.body;
+
     try {
+
         // vamos ver se customerId é de um cliente cadastrado
         // pegando a lista de clientes
         const resultCustomers = await db.query(
             `SELECT * FROM customers;`);
-            // verificar de o valor fornecido de customerId existe no resultCustomers
-            let customerIdExiste = false;
-            resultCustomers.rows.forEach(item => {
+        // verificar de o valor fornecido de customerId existe no resultCustomers
+        let customerIdExiste = false;
+        resultCustomers.rows.forEach(item => {
             if (item._id === customerId) {
                 customerIdExiste = true;
                 return;
@@ -35,7 +36,23 @@ export async function rentsPost(req, res) {
         if (customerIdExiste) {
             return res.sendStatus(409);
         }
-       
+
+        // vamos ver se gameId é de um jogo cadastrado
+        // pegando a lista de jogos
+        const resultGames = await db.query(
+            `SELECT * FROM games;`);
+        // verificar de o valor fornecido de gameId existe no resultGames
+        let gamesIdExiste = false;
+        resultGames.rows.forEach(item => {
+            if (item._id === gameId) {
+                gamesIdExiste = true;
+                return;
+            }
+        });
+        if (gamesIdExiste) {
+            return res.sendStatus(409);
+        }
+
         // verificar se o cpf ja foi cadastrado
         let cpfExists = false;
         listCustomers.rows.forEach(customer => {
