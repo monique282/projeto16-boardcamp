@@ -59,6 +59,7 @@ export async function rentsPost(req, res) {
         if (daysRented <= 0) {
             return res.sendStatus(400);
         }
+        
         // enviar a data atual no rendDate
         const rentDate = dayjs().format('DD/MM/AAAA');
        
