@@ -23,7 +23,7 @@ export async function gamePost(req, res) {
     try {
         // pegando toda a lista de jogos
         const listGames = await db.query(`
-        SELECT * FROM games
+        SELECT * FROM games;
         `)
         // verificar se o nome ja foi cadastrado
         let nameExists = false;

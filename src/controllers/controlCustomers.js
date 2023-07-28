@@ -7,7 +7,8 @@ import { db } from "../database/db.js";
 export async function customersGet(req, res) {
     try {
 
-        const customersRequest = await db.query(`SELECT * FROM customers;`)
+        const result = await db.query(`SELECT * FROM customers;`);
+        const customersRequest = result.rows;
         res.send(customersRequest);
     } catch (err) {
         res.status(500).send(err.message)
@@ -22,8 +23,10 @@ export async function customersGetId(req, res) {
 
     try {
 
-        const CustomersRequestByid = await db.query(
-            `SELECT * FROM customers WHERE id=$1;`, [id])
+        const result = await db.query(
+            `SELECT * FROM customers WHERE id=$1;`, [id]);
+        const CustomersRequestByid = result.rows;
+
         res.send(CustomersRequestByid);
     } catch (err) {
         res.status(500).send(err.message)
@@ -37,25 +40,25 @@ export async function customersPost(req, res) {
     const { name, phone, cpf, birthday } = req.body;
 
     try {
-        // pegando toda a lista de jogos
-        const listGames = await db.query(`
-        SELECT * FROM games
+        // pegando toda a lista de clientes
+        const listCustomers = await db.query(`
+        SELECT * FROM customers;
         `)
-        // verificar se o nome ja foi cadastrado
-        let nameExists = false;
-        listGames.rows.forEach(game => {
-            if (game.name === name) {
-                nameExists = true;
+        // verificar se o cpf ja foi cadastrado
+        let cpfExists = false;
+        listCustomers.rows.forEach(customer => {
+            if (customer.cpf === cpf) {
+                cpfExists = true;
                 return;
             }
         });
-        if (nameExists) {
+        if (cpfExists) {
             return res.sendStatus(409);
         }
         const insertGame = await db.query(`
             INSERT INTO games (name, image, "stockTotal", "pricePerDay") VAlUES ($1, $2, $3, $4);
             ` , [name, image, stockTotal, pricePerDay]);
-            return res.sendStatus(201);
+        return res.sendStatus(201);
 
     } catch (err) {
         res.status(500).send(err.message)
