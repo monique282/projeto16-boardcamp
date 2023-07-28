@@ -2,14 +2,24 @@
 // esse arquivo é chamado la em customersRoutes
 
 import { db } from "../database/db.js";
+import { parseISO, format } from 'date-fns';
 
 // essa função aqui é enviado por um get para pegar a lista de clientes
 export async function customersGet(req, res) {
     try {
 
         const result = await db.query(`SELECT * FROM customers;`);
-        const customersRequest = result.rows;
-        res.send(customersRequest);
+         // tratando a data para vim no formato correto
+         const updatedData = result.rows.map(date => {
+            const dateCorret = new Date(date.birthday);
+            const formatDate = dateCorret.toISOString().split('T')[0];
+            return {
+                ...date,
+                birthday: formatDate
+            }
+        });
+        
+        res.send(updatedData);
     } catch (err) {
         res.status(500).send(err.message)
     }
@@ -25,9 +35,17 @@ export async function customersGetId(req, res) {
 
         const result = await db.query(
             `SELECT * FROM customers WHERE id=$1;`, [id]);
-        const CustomersRequestByid = result.rows;
-
-        res.send(CustomersRequestByid);
+        // tratando a data para vim no formato correto
+        const updatedData = result.rows.map(date => {
+            const dateCorret = new Date(date.birthday);
+            const formatDate = dateCorret.toISOString().split('T')[0];
+            return {
+                ...date,
+                birthday: formatDate
+            }
+        });
+        
+        res.send(updatedData);
     } catch (err) {
         res.status(500).send(err.message)
     }
@@ -55,9 +73,15 @@ export async function customersPost(req, res) {
         if (cpfExists) {
             return res.sendStatus(409);
         }
-        const insertGame = await db.query(`
-            INSERT INTO games (name, image, "stockTotal", "pricePerDay") VAlUES ($1, $2, $3, $4);
-            ` , [name, image, stockTotal, pricePerDay]);
+        // const parsedBirthday = parseISO(birthday);
+
+        // // Extraia apenas a parte da data (dia, mês e ano) e formate-a como string
+        // const formatBirthday = format(parsedBirthday, 'yyyy-MM-dd');
+
+        // se tivertudo certo enviar para o Api
+        const insertCustomers = await db.query(`
+            INSERT INTO customers (name, phone, cpf, birthday) VAlUES ($1, $2, $3, $4);
+            ` , [name, phone, cpf, birthday]);
         return res.sendStatus(201);
 
     } catch (err) {
