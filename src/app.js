@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import router from "./routes/indexRoutes.js";
 
-/* API configuration*/
+// configuração da API
 dotenv.config();
 
 const app = express();
