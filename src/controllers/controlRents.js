@@ -62,7 +62,7 @@ export async function rentsPost(req, res) {
 
         // enviar a data atual no rendDate
         const rentDate = dayjs().format('DD/MM/AAAA');
-       
+
         // pegar a dada de quando foi devolvido na rota de finalizar pedido
         const returnDate = null;
 
@@ -72,12 +72,15 @@ export async function rentsPost(req, res) {
         const originalPrice = result.pricePerDay;
 
 
+        // pegar a dada de quando foi devolvido na rota de finalizar pedido
+        const delayFee = null;
+
         // se tivertudo certo enviar para o Api
         const insertRentals = await db.query(`
-            INSERT INTO rentals (customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee) VAlUES ($1, $2, $3, $4);
+            INSERT INTO rentals (customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee) VAlUES ($1, $2, $3, $4, $5, $6, $7);
             ` , [customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee]);
 
-    
+
         return res.sendStatus(201);
 
     } catch (err) {
