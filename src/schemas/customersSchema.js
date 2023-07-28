@@ -1,6 +1,6 @@
 import joi from "joi";
 
-export const gameTable = joi.object({
+export const customersTable = joi.object({
 
     name: joi.string().min(1).required(),
     phone: joi.number().min(10).max(11).pattern(/^\d+$/).required(),

@@ -35,6 +35,11 @@ export async function customersGetId(req, res) {
 
         const result = await db.query(
             `SELECT * FROM customers WHERE id=$1;`, [id]);
+
+            // verificando se o id existe
+            if(result.length === 0){
+                return res.status(404).send(err.message)
+            }
         // tratando a data para vim no formato correto
         const updatedData = result.rows.map(date => {
             const dateCorret = new Date(date.birthday);
@@ -45,7 +50,7 @@ export async function customersGetId(req, res) {
             }
         });
         
-        res.send(updatedData);
+        res.send(updatedData[0]);
     } catch (err) {
         res.status(500).send(err.message)
     }
