@@ -37,8 +37,8 @@ export async function customersGetId(req, res) {
             `SELECT * FROM customers WHERE id=$1;`, [id]);
 
             // verificando se o id existe
-            if(result.length === 0){
-                return res.status(404).send(err.message)
+            if(result.rows.length === 0){
+                return res.sendStatus(404)
             }
         // tratando a data para vim no formato correto
         const updatedData = result.rows.map(date => {
