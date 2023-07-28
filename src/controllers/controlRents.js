@@ -77,7 +77,7 @@ export async function rentsPost(req, res) {
         // pegando a lista de jogos
         const result = await db.query(`SELECT * FROM games WHERE id=$1;`, [parseInt(gameId)]);
         // salvando o valor do jogo
-        const originalPrice = result.rows[0].pricePerDay;
+        const originalPrice = (result.rows[0].pricePerDay)*(parseInt(daysRented));
         
         // pegar a dada de quando foi devolvido na rota de finalizar pedido
         const delayFee = null;
