@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 export async function rentsGet(req, res) {
     try {
         const rentsRequest = await db.query(`SELECT * FROM rentals;`)
-        res.send(rentsRequest);
+        res.send(rentsRequest.rows);
 
     } catch (err) {
         res.status(500).send(err.message)
@@ -28,10 +28,10 @@ export async function rentsPost(req, res) {
         const resultCustomers = await db.query(
             `SELECT * FROM customers;`);
         // verificar de o valor fornecido de customerId existe no resultCustomers
-        let customerIdExiste = false;
+        let customerIdExiste = true;
         resultCustomers.rows.forEach(item => {
-            if (item._id === customerId) {
-                customerIdExiste = true;
+            if (parseInt(item.id) === parseInt(customerId)) {
+                customerIdExiste = false;
                 return;
             }
         });
@@ -44,10 +44,10 @@ export async function rentsPost(req, res) {
         const resultGames = await db.query(
             `SELECT * FROM games;`);
         // verificar de o valor fornecido de gameId existe no resultGames
-        let gamesIdExiste = false;
+        let gamesIdExiste = true;
         resultGames.rows.forEach(item => {
-            if (item._id === gameId) {
-                gamesIdExiste = true;
+            if (parseInt(item.id) === parseInt(gameId)) {
+                gamesIdExiste = false;
                 return;
             }
         });
@@ -61,15 +61,16 @@ export async function rentsPost(req, res) {
         }
 
         // enviar a data atual no rendDate
-        const rentDate = dayjs().format('DD/MM/AAAA');
+        const rentDate = dayjs().format('DD/MM/YYYY');
 
         // pegar a dada de quando foi devolvido na rota de finalizar pedido
         const returnDate = null;
 
         // pegando a lista de jogos
-        const result = await db.query(`SELECT * FROM games WHERE id=$1;`, [gameId]);
+        const result = await db.query(`SELECT * FROM games WHERE id=$1;`, [parseInt(gameId)]);
         // salvando o valor do jogo
-        const originalPrice = result.pricePerDay;
+        const originalPrice = result.rows[0].pricePerDay;
+        
 
 
         // pegar a dada de quando foi devolvido na rota de finalizar pedido
@@ -77,7 +78,7 @@ export async function rentsPost(req, res) {
 
         // se tivertudo certo enviar para o Api
         const insertRentals = await db.query(`
-            INSERT INTO rentals (customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee) VAlUES ($1, $2, $3, $4, $5, $6, $7);
+            INSERT INTO rentals ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee") VAlUES ($1, $2, $3, $4, $5, $6, $7);
             ` , [customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee]);
 
 
