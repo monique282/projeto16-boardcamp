@@ -3,7 +3,7 @@
 
 import { db } from "../database/db.js";
 
-// esse arquivo aqui é enviado por um get para pegar a lista de jogos
+// essa função aqui é enviado por um get para pegar a lista de jogos
 export async function gameGet(req, res) {
     try {
 
@@ -15,7 +15,7 @@ export async function gameGet(req, res) {
 
 }
 
-// esse arquivo aqui é enviado por um post para enviar uma lista de jogos
+// essa função aqui é enviado por um post para enviar uma lista de jogos
 
 // export async function gamePost(req, res) {
 //     try {

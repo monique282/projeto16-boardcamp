@@ -3,7 +3,7 @@
 
 import { db } from "../database/db.js";
 
-// essa função aqui é enviado por um get para pegar a lista de jogos
+// essa função aqui é enviado por um get para pegar a lista de clientes
 export async function customersGet(req, res) {
     try {
 
@@ -15,7 +15,7 @@ export async function customersGet(req, res) {
 
 }
 
-// essa função aqui é enviado por um get para pegar a lista de jogos pelo id
+// essa função aqui é enviado por um get para pegar a lista de clientes pelo id
 
 export async function customersGetId(req, res) {
     const { id } = req.params;

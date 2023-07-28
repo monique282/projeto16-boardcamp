@@ -4,12 +4,17 @@
 import { Router } from "express";
 import gameRouter from "./gameRoutes.js";
 import customerRouter from "./customersRoutes.js";
+import rentsRouter from "./rentsRoutes.js";
 
 const router = Router()
 
 router.use([
+    // rota para os jogos
     gameRouter,
-    customerRouter
+    // rota para os clientes
+    customerRouter,
+    // rota para os alugueis
+    rentsRouter
 ]);
 
 export default router;
