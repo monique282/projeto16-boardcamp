@@ -2,7 +2,7 @@
 // essa pasta é solicitada em dentro da pasta Routes e usada no arquivo expecifico necessario
 
 
-export function validarJoiParaTodos(joi) {
+export function validateJoiForAll(joi) {
     return (req, res, next) => {
         // verificar se passou nas validações do joi
         const validarSeTaCerto = joi.validate(req.body, { abortEarly: false });
