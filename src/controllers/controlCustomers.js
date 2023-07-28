@@ -73,11 +73,6 @@ export async function customersPost(req, res) {
         if (cpfExists) {
             return res.sendStatus(409);
         }
-        // const parsedBirthday = parseISO(birthday);
-
-        // // Extraia apenas a parte da data (dia, mês e ano) e formate-a como string
-        // const formatBirthday = format(parsedBirthday, 'yyyy-MM-dd');
-
         // se tivertudo certo enviar para o Api
         const insertCustomers = await db.query(`
             INSERT INTO customers (name, phone, cpf, birthday) VAlUES ($1, $2, $3, $4);
