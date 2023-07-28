@@ -69,7 +69,7 @@ export async function rentsPost(req, res) {
         }
 
         // enviar a data atual no rendDate
-        const rentDate = dayjs().format('YYYY/MM/DD');
+        const rentDate = dayjs().format('YYYY-MM-DD');
 
         // pegar a dada de quando foi devolvido na rota de finalizar pedido
         const returnDate = null;
