@@ -20,10 +20,22 @@ export async function rentsPost(req, res) {
     const { customerId, gameId, daysRented} = req.body;
     
     try {
-        // pegando toda a lista de clientes
-        const listCustomers = await db.query(`
-        SELECT * FROM rents;
-        `)
+        // vamos ver se customerId é de um cliente cadastrado
+        // pegando a lista de clientes
+        const resultCustomers = await db.query(
+            `SELECT * FROM customers;`);
+            // verificar de o valor fornecido de customerId existe no resultCustomers
+            let customerIdExiste = false;
+            resultCustomers.rows.forEach(item => {
+            if (item._id === customerId) {
+                customerIdExiste = true;
+                return;
+            }
+        });
+        if (customerIdExiste) {
+            return res.sendStatus(409);
+        }
+       
         // verificar se o cpf ja foi cadastrado
         let cpfExists = false;
         listCustomers.rows.forEach(customer => {
