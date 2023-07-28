@@ -9,7 +9,15 @@ import dayjs from 'dayjs';
 export async function rentsGet(req, res) {
     try {
         const rentsRequest = await db.query(`SELECT * FROM rentals;`)
-        res.send(rentsRequest.rows);
+        const updatedData = rentsRequest.rows.map(date => {
+            const dateCorret = new Date(date.rentDate);
+            const formatDate = dateCorret.toISOString().split('T')[0];
+            return {
+                ...date,
+                rentDate: formatDate
+            }
+        });
+        res.send(updatedData);
 
     } catch (err) {
         res.status(500).send(err.message)
@@ -71,8 +79,6 @@ export async function rentsPost(req, res) {
         // salvando o valor do jogo
         const originalPrice = result.rows[0].pricePerDay;
         
-
-
         // pegar a dada de quando foi devolvido na rota de finalizar pedido
         const delayFee = null;
 
