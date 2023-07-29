@@ -90,7 +90,7 @@ export async function customersPost(req, res) {
     }
 }
 
-// essa função aqui é enviado para atualizar lista de cliente por um id
+// essa função aqui é enviado para atualizar lista de cliente usando 0 id
 
 export async function customersPut(req, res) {
     // pegar os dados que a pessoa colocou na tela de cadastro de cliente
@@ -100,8 +100,8 @@ export async function customersPut(req, res) {
     try {
          //verificar se o cpf ja existe
         const resultCustomers = await db.query(`SELECT * FROM customers WHERE cpf = $1;`, [cpf]);
-        if(resultCustomers.rows.length !== 0 && resultCustomers.rows[0].id === parseInt[id]){
-
+        if(resultCustomers.rows.length !== 0 && resultCustomers.rows[0].id !== parseInt(id)){
+            return res.sendStatus(409);
         }
 
         return res.sendStatus(200);
