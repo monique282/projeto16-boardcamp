@@ -99,7 +99,7 @@ export async function rentsPost(req, res) {
                 i++
             }
         });
-        
+
         if (parseInt(i) >= parseInt(result.rows[0].stockTotal)) {
             return res.sendStatus(400);
         };
@@ -122,8 +122,16 @@ export async function rentsPost(req, res) {
 export async function rentsPostID(req, res) {
     // pegar os dados que a pessoa colocou na tela de alugueis
     const { customerId, gameId, daysRented } = req.body;
+    const { id } = req.params;
 
     try {
+
+        // verificar se o aluguel que a pessoa quer finalizar existe
+        const resultCustomersId = await db.query(
+            `SELECT * FROM customers WHERE id = $1;`, [id]);
+        if (resultCustomersId.rows.length === 0) {
+            return res.sendStatus(404);
+        }
 
         return res.sendStatus(200);
 
