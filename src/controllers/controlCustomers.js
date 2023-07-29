@@ -98,11 +98,17 @@ export async function customersPut(req, res) {
     const { id } = req.params;
 
     try {
-         //verificar se o cpf ja existe
+        //verificar se o cpf ja existe
         const resultCustomers = await db.query(`SELECT * FROM customers WHERE cpf = $1;`, [cpf]);
-        if(resultCustomers.rows.length !== 0 && resultCustomers.rows[0].id !== parseInt(id)){
+        // cpf que quer ser alterado não é do dono
+        if (resultCustomers.rows.length !== 0 && resultCustomers.rows[0].id !== parseInt(id)) {
             return res.sendStatus(409);
         }
+
+       // se tivertudo certo enviar para o Api
+        const insertPutCustomers = await db.query(`
+        UPDATE customers SET name = $1, phone = $2, cpf = $3, birthday = $4 WHERE id = $5;
+        ` , [name, phone, cpf, birthday, parseInt(id)]);
 
         return res.sendStatus(200);
     } catch (err) {
