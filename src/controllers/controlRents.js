@@ -77,10 +77,25 @@ export async function rentsPost(req, res) {
         // pegando a lista de jogos
         const result = await db.query(`SELECT * FROM games WHERE id=$1;`, [parseInt(gameId)]);
         // salvando o valor do jogo
-        const originalPrice = (result.rows[0].pricePerDay)*(parseInt(daysRented));
-        
+        const originalPrice = (result.rows[0].pricePerDay) * (parseInt(daysRented));
+
         // pegar a dada de quando foi devolvido na rota de finalizar pedido
         const delayFee = null;
+
+        // verificar se tem quantodade disponivel de jogos pra poder alugar
+        const resultRents = await db.query(
+            `SELECT * FROM rentals;`);
+        let i = 0;
+        const isAvailable = resultRents.rows.map(item => {
+            if (item.gameId && returnDate === null) {
+                i++
+            }
+        });
+        
+        if ([parseInt(i)] >= [parseInt(result.rows[0].stockTotal)]) {
+            return res.sendStatus(400);
+        };
+
 
         // se tivertudo certo enviar para o Api
         const insertRentals = await db.query(`
