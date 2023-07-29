@@ -92,7 +92,7 @@ export async function rentsPost(req, res) {
             }
         });
         
-        if ([parseInt(i)] >= [parseInt(result.rows[0].stockTotal)]) {
+        if (parseInt(i) >= parseInt(result.rows[0].stockTotal)) {
             return res.sendStatus(400);
         };
 

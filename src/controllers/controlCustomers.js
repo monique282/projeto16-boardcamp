@@ -97,12 +97,12 @@ export async function customersPut(req, res) {
     const { name, phone, cpf, birthday } = req.body;
     const { id } = req.params;
 
-   
-    
-
     try {
          //verificar se o cpf ja existe
         const resultCustomers = await db.query(`SELECT * FROM customers WHERE cpf = $1;`, [cpf]);
+        if(resultCustomers.rows.length !== 0 && resultCustomers.rows[0].id === parseInt[id]){
+
+        }
 
         return res.sendStatus(200);
     } catch (err) {
