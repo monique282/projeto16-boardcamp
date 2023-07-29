@@ -82,7 +82,7 @@ export async function rentsPost(req, res) {
         // pegar a dada de quando foi devolvido na rota de finalizar pedido
         const delayFee = null;
 
-        // verificar se tem quantodade disponivel de jogos pra poder alugar
+        // verificar se tem quantidade disponivel de jogos pra poder alugar
         const resultRents = await db.query(
             `SELECT * FROM rentals;`);
         let i = 0;

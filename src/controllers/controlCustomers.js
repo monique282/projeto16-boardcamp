@@ -9,8 +9,8 @@ export async function customersGet(req, res) {
     try {
 
         const result = await db.query(`SELECT * FROM customers;`);
-         // tratando a data para vim no formato correto
-         const updatedData = result.rows.map(date => {
+        // tratando a data para vim no formato correto
+        const updatedData = result.rows.map(date => {
             const dateCorret = new Date(date.birthday);
             const formatDate = dateCorret.toISOString().split('T')[0];
             return {
@@ -18,7 +18,7 @@ export async function customersGet(req, res) {
                 birthday: formatDate
             }
         });
-        
+
         res.send(updatedData);
     } catch (err) {
         res.status(500).send(err.message)
@@ -36,10 +36,10 @@ export async function customersGetId(req, res) {
         const result = await db.query(
             `SELECT * FROM customers WHERE id=$1;`, [id]);
 
-            // verificando se o id existe
-            if(result.rows.length === 0){
-                return res.sendStatus(404)
-            }
+        // verificando se o id existe
+        if (result.rows.length === 0) {
+            return res.sendStatus(404)
+        }
         // tratando a data para vim no formato correto
         const updatedData = result.rows.map(date => {
             const dateCorret = new Date(date.birthday);
@@ -49,7 +49,7 @@ export async function customersGetId(req, res) {
                 birthday: formatDate
             }
         });
-        
+
         res.send(updatedData[0]);
     } catch (err) {
         res.status(500).send(err.message)
@@ -84,6 +84,27 @@ export async function customersPost(req, res) {
             ` , [name, phone, cpf, birthday]);
         return res.sendStatus(201);
 
+    } catch (err) {
+        res.status(500).send(err.message)
+
+    }
+}
+
+// essa função aqui é enviado para atualizar lista de cliente por um id
+
+export async function customersPut(req, res) {
+    // pegar os dados que a pessoa colocou na tela de cadastro de cliente
+    const { name, phone, cpf, birthday } = req.body;
+    const { id } = req.params;
+
+   
+    
+
+    try {
+         //verificar se o cpf ja existe
+        const resultCustomers = await db.query(`SELECT * FROM customers WHERE cpf = $1;`, [cpf]);
+
+        return res.sendStatus(200);
     } catch (err) {
         res.status(500).send(err.message)
 
