@@ -133,6 +133,11 @@ export async function rentsPostID(req, res) {
             return res.sendStatus(404);
         }
 
+        // vericando de o aluguel ja foi entregue
+        if(resultCustomersId.rows[0].returnDate !== null){
+            return res.sendStatus(400);
+        }
+
         return res.sendStatus(200);
 
     } catch (err) {
