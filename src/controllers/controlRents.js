@@ -8,7 +8,15 @@ import dayjs from 'dayjs';
 // essa função aqui é enviado por um get para pegar a lista de alugueis
 export async function rentsGet(req, res) {
     try {
-        const rentsRequest = await db.query(`SELECT * FROM rentals;`)
+        const rentsRequest = await db.query(`SELECT rentals.* , 
+        json_build_object('id', customers.id, 'name',customers.name) AS customer, 
+        json_build_object('id', games.id, 'name',games.name) AS game
+        FROM rentals
+        JOIN customers ON rentals."customerId" = customers.id
+        JOIN games ON rentals."gameId" = games.id;
+
+        
+        `)
         const updatedData = rentsRequest.rows.map(date => {
             const dateCorret = new Date(date.rentDate);
             const formatDate = dateCorret.toISOString().split('T')[0];
