@@ -17,14 +17,33 @@ export async function rentsGet(req, res) {
 
         
         `)
+
+
         const updatedData = rentsRequest.rows.map(date => {
-            const dateCorret = new Date(date.rentDate);
-            const formatDate = dateCorret.toISOString().split('T')[0];
-            return {
-                ...date,
-                rentDate: formatDate
+            if (date.returnDate !== null) {
+                const dateCorretCrient = new Date(date.rentDate);
+                const dateCorretGiveBack = new Date(date.returnDate);
+                const formatDateCrient = dateCorretCrient.toISOString().split('T')[0];
+                const formatDateGiveBack = dateCorretGiveBack.toISOString().split('T')[0];
+                return {
+                    ...date,
+                    rentDate: formatDateCrient,
+                    returnDate: formatDateGiveBack
+                }
             }
+            if (date.returnDate === null) {
+                const dateCorretCrient = new Date(date.rentDate);
+                const formatDateCrient = dateCorretCrient.toISOString().split('T')[0];
+                return {
+                    ...date,
+                    rentDate: formatDateCrient
+
+                }
+            }
+
         });
+
+
         res.send(updatedData);
 
     } catch (err) {
@@ -121,22 +140,28 @@ export async function rentsPost(req, res) {
 
 export async function rentsPostID(req, res) {
     // pegar os dados que a pessoa colocou na tela de alugueis
-    const { customerId, gameId, daysRented } = req.body;
     const { id } = req.params;
 
     try {
 
         // verificar se o aluguel que a pessoa quer finalizar existe
         const resultCustomersId = await db.query(
-            `SELECT * FROM customers WHERE id = $1;`, [id]);
+            `SELECT * FROM rentals WHERE id = $1;`, [id]);
         if (resultCustomersId.rows.length === 0) {
             return res.sendStatus(404);
         }
 
         // vericando de o aluguel ja foi entregue
-        if(resultCustomersId.rows[0].returnDate !== null){
+        if (resultCustomersId.rows[0].returnDate !== null) {
             return res.sendStatus(400);
         }
+
+        // atualizando o returnDate de null para a data atual
+        // enviar a data atual no rendDate
+        const rentDate = dayjs().format('YYYY-MM-DD');
+        const insertPutRents = await db.query(`
+        UPDATE rentals SET "returnDate" = $1 WHERE id = $2;
+        ` , [rentDate, id]);
 
         return res.sendStatus(200);
 
