@@ -118,3 +118,17 @@ export async function rentsPost(req, res) {
 
     }
 }
+
+export async function rentsPostID(req, res) {
+    // pegar os dados que a pessoa colocou na tela de alugueis
+    const { customerId, gameId, daysRented } = req.body;
+
+    try {
+
+        return res.sendStatus(200);
+
+    } catch (err) {
+        res.status(500).send(err.message)
+
+    }
+}
