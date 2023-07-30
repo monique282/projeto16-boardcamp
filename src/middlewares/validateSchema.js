@@ -6,14 +6,14 @@ export function validateJoiForAll(joi) {
     return (req, res, next) => {
         // verificar se passou nas validações do joi
         const validarSeTaCerto = joi.validate(req.body, { abortEarly: false });
+        
         // o abortEarly serve pra procurar todos os requisitos que nao passou no joi
         if (validarSeTaCerto.error) {
             const erroEspecifico = validarSeTaCerto.error.details.map(qual => qual.message);
             return res.status(400).send(erroEspecifico);
-        }
+        };
         next();
-    }
-
+    };
 }
 
 
