@@ -7,9 +7,19 @@ import { parseISO, format } from 'date-fns';
 // essa função aqui é enviado por um get para pegar a lista de clientes
 export async function customersGet(req, res) {
 
+    // pegando os dados por query
+    const { cpf } = red.query;
+
     try {
 
-        const result = await db.query(`SELECT * FROM customers;`);
+        let result = [];
+
+        // testando se os dados do query são validos
+        if (typeof cpf !== 'undefined' && cpf !== '') {
+            result = await db.query(`SELECT * FROM customers WHERE name LIKE $1;`, [`${cpf}%`]);
+        } else {
+            result = await db.query(`SELECT * FROM customers;`);
+        };
 
         // tratando a data para vim no formato correto
         const updatedData = result.rows.map(date => {
@@ -29,7 +39,6 @@ export async function customersGet(req, res) {
 };
 
 // essa função aqui é enviado por um get para pegar a lista de clientes pelo id
-
 export async function customersGetId(req, res) {
     const { id } = req.params;
 
@@ -61,7 +70,6 @@ export async function customersGetId(req, res) {
 };
 
 // essa função aqui é enviado por um post para crir a lista de cliente
-
 export async function customersPost(req, res) {
 
     // pegar os dados que a pessoa colocou na tela de cadastro de cliente
@@ -99,7 +107,6 @@ export async function customersPost(req, res) {
 };
 
 // essa função aqui é enviado para atualizar lista de cliente usando 0 id
-
 export async function customersPut(req, res) {
 
     // pegar os dados que a pessoa colocou na tela de cadastro de cliente
