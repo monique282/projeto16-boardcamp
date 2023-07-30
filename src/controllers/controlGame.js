@@ -6,7 +6,12 @@ import { db } from "../database/db.js";
 // essa função aqui é enviado por um get para pegar a lista de jogos
 
 export async function gameGet(req, res) {
+
+    // pegando os dados por query
+    const { name } = red.query;
+
     try {
+        
         const result = await db.query(`SELECT * FROM games;`);
         const gameRequest = result.rows;
         res.send(gameRequest);
@@ -44,7 +49,7 @@ export async function gamePost(req, res) {
         const insertGame = await db.query(`
             INSERT INTO games (name, image, "stockTotal", "pricePerDay") VAlUES ($1, $2, $3, $4);
             ` , [name, image, stockTotal, pricePerDay]);
-            return res.sendStatus(201);
+        return res.sendStatus(201);
 
     } catch (err) {
         res.status(500).send(err.message);
