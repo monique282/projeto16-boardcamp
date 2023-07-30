@@ -18,7 +18,6 @@ export async function rentsGet(req, res) {
         
         `)
 
-
         const updatedData = rentsRequest.rows.map(date => {
             if (date.returnDate !== null) {
                 const dateCorretCrient = new Date(date.rentDate);
@@ -103,7 +102,7 @@ export async function rentsPost(req, res) {
 
         // pegando a lista de jogos
         const result = await db.query(`SELECT * FROM games WHERE id=$1;`, [parseInt(gameId)]);
-        // salvando o valor do jogo
+        // salvando o valor do jogo pela quantidada de dias alugados
         const originalPrice = (result.rows[0].pricePerDay) * (parseInt(daysRented));
 
         // pegar a dada de quando foi devolvido na rota de finalizar pedido
@@ -138,6 +137,28 @@ export async function rentsPost(req, res) {
     }
 }
 
+let Delay = 0;
+function adicionarDias(deliveryDate, days, rentDate) {
+    let initialDate = new Date(deliveryDate);
+    // Somar os dias à data
+    initialDate.setDate(initialDate.getDate() + days);
+    // transformando em uma data valida
+    const dateCorretCrient = new Date(initialDate);
+    const formatDateCrient = dateCorretCrient.toISOString().split('T')[0];
+
+    // tranformando as informação em data
+    const dat1 = new Date(rentDate);
+    const dat2 = new Date(formatDateCrient);
+
+    // Calcular a diferença em milissegundos
+    const differenceInMilliseconds = dat1 - dat2;
+
+    // Converter a diferença de milissegundos para dias
+    const millisecondsPerDay = 24 * 60 * 60 * 1000; // 1 dia tem 24 horas, 60 minutos, 60 segundos e 1000 milissegundos
+    const Delay = differenceInMilliseconds / millisecondsPerDay;
+
+}
+
 export async function rentsPostID(req, res) {
     // pegar os dados que a pessoa colocou na tela de alugueis
     const { id } = req.params;
@@ -151,17 +172,31 @@ export async function rentsPostID(req, res) {
             return res.sendStatus(404);
         }
 
-        // vericando de o aluguel ja foi entregue
+        // vericando se o aluguel ja foi entregue
         if (resultCustomersId.rows[0].returnDate !== null) {
             return res.sendStatus(400);
         }
 
-        // atualizando o returnDate de null para a data atual
         // enviar a data atual no rendDate
         const rentDate = dayjs().format('YYYY-MM-DD');
+
+        // tranformar a data vinda do servido em uma data valida
+        // data de criação
+        const dateCorretCrient = new Date(resultCustomersId.rows[0].rentDate);
+        const formatDateCrient = dateCorretCrient.toISOString().split('T')[0];
+
+        // chamando função que faz o claculo so atrado
+        adicionarDias(formatDateCrient, resultCustomersId.rows[0].daysRented, rentDate)
+       const delayFee = 0;
+        // vendo se a dias atrazados
+        if (Delay > 0) {
+            delayFee = Delay * (resultCustomersId.rows[0].originalPrice / resultCustomersId.rows[0].daysRented);
+        }
+
+
         const insertPutRents = await db.query(`
-        UPDATE rentals SET "returnDate" = $1 WHERE id = $2;
-        ` , [rentDate, id]);
+        UPDATE rentals SET "returnDate" = $1 , "delayFee" = $2 WHERE id = $3;
+        ` , [rentDate, delayFee, id]);
 
         return res.sendStatus(200);
 
