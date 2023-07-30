@@ -35,10 +35,13 @@ export async function gameGet(req, res) {
                             result = await db.query(`SELECT * FROM games OFFSET $1 ;`, [offset])
                         } else
                             if (typeof limit !== 'undefined' && limit !== '') {
-                                result = await db.query(`SELECT * FROM games OFFSET $1 ;`, [limit])
-                            } else {
-                                result = await db.query(`SELECT * FROM games ;`)
-                            }
+                                result = await db.query(`SELECT * FROM games LIMIT $1 ;`, [limit])
+                            } else
+                                if (typeof name !== 'undefined' && name !== '') {
+                                    result = await db.query(`SELECT * FROM games WHERE name LIKE $1;`, [`${name}%`]);
+                                } else {
+                                    result = await db.query(`SELECT * FROM games ;`)
+                                }
 
 
         const gameRequest = result.rows;
