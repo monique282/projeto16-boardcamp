@@ -10,14 +10,22 @@ export async function rentsGet(req, res) {
 
     // pegando os dados pelo query
     const { customerId , gameId} = req.query
+
     try {
-        const rentsRequest = await db.query(`SELECT rentals.* , 
-        json_build_object('id', customers.id, 'name',customers.name) AS customer, 
-        json_build_object('id', games.id, 'name',games.name) AS game
-        FROM rentals
-        JOIN customers ON rentals."customerId" = customers.id
-        JOIN games ON rentals."gameId" = games.id;
-        `);
+        let rentsRequest = [];
+
+        // testando se os dados do query são validos
+        if (typeof customerId !== 'undefined' && customerId !== '') {
+            result = await db.query(`SELECT * FROM rentals WHERE name LIKE $1;`, [`${customerId}%`]);
+        } else {
+            result = await db.query(`SELECT rentals.* , 
+            json_build_object('id', customers.id, 'name',customers.name) AS customer, 
+            json_build_object('id', games.id, 'name',games.name) AS game
+            FROM rentals
+            JOIN customers ON rentals."customerId" = customers.id
+            JOIN games ON rentals."gameId" = games.id;`);
+        };
+
 
         const updatedData = rentsRequest.rows.map(date => {
             if (date.returnDate !== null) {

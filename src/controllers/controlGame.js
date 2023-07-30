@@ -8,7 +8,7 @@ import { db } from "../database/db.js";
 export async function gameGet(req, res) {
 
     // pegando os dados por query
-    const { name } = red.query;
+    const { name } = req.query;
 
     try {
         let result = [];
