@@ -225,7 +225,7 @@ export async function rentsDelete(req, res) {
         }
 
         // vericando se o aluguel ja foi entregue
-        if (resultCustomersId.rows[0].returnDate === null) {
+        if (resultIdDelete.rows[0].returnDate === null) {
             return res.sendStatus(400);
         }
 
