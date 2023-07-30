@@ -11,8 +11,10 @@ const router = Router()
 router.use([
     // rota para os jogos
     gameRouter,
+
     // rota para os clientes
     customerRouter,
+    
     // rota para os alugueis
     rentsRouter
 ]);
