@@ -13,7 +13,7 @@ export async function rentsGet(req, res) {
         FROM rentals
         JOIN customers ON rentals."customerId" = customers.id
         JOIN games ON rentals."gameId" = games.id;
-        `)
+        `);
 
         const updatedData = rentsRequest.rows.map(date => {
             if (date.returnDate !== null) {
@@ -25,8 +25,8 @@ export async function rentsGet(req, res) {
                     ...date,
                     rentDate: formatDateCrient,
                     returnDate: formatDateGiveBack
-                }
-            }
+                };
+            };
 
             if (date.returnDate === null) {
                 const dateCorretCrient = new Date(date.rentDate);
@@ -34,15 +34,15 @@ export async function rentsGet(req, res) {
                 return {
                     ...date,
                     rentDate: formatDateCrient
-                }
-            }
+                };
+            };
         });
         res.send(updatedData);
 
     } catch (err) {
         res.status(500).send(err.message)
-    }
-}
+    };
+};
 
 export async function rentsPost(req, res) {
     // pegar os dados que a pessoa colocou na tela de alugueis
@@ -126,10 +126,9 @@ export async function rentsPost(req, res) {
         return res.sendStatus(201);
     }
     catch (err) {
-        res.status(500).send(err.message)
-
-    }
-}
+        res.status(500).send(err.message);
+    };
+};
 
 let Delay = 0;
 let delayFeef = 0;
@@ -153,8 +152,7 @@ function adicionarDias(deliveryDate, days, rentDate) {
     // Converter a diferença de milissegundos para dias
     const millisecondsPerDay = 24 * 60 * 60 * 1000; // 1 dia tem 24 horas, 60 minutos, 60 segundos e 1000 milissegundos
     Delay = differenceInMilliseconds / millisecondsPerDay;
-
-}
+};
 
 export async function rentsPostID(req, res) {
     // pegar os dados que a pessoa colocou na tela de alugueis
@@ -169,12 +167,12 @@ export async function rentsPostID(req, res) {
         // verificando se existe
         if (resultCustomersId.rows.length === 0) {
             return res.sendStatus(404);
-        }
+        };
 
         // vericando se o aluguel ja foi entregue
         if (resultCustomersId.rows[0].returnDate !== null) {
             return res.sendStatus(400);
-        }
+        };
 
         // enviar a data atual no rendDate
         const rentDate = dayjs().format('YYYY-MM-DD');
@@ -185,29 +183,26 @@ export async function rentsPostID(req, res) {
         const formatDateCrient = dateCorretCrient.toISOString().split('T')[0];
 
         // chamando função que faz o claculo so atrado
-        adicionarDias(formatDateCrient, resultCustomersId.rows[0].daysRented, rentDate)
+        adicionarDias(formatDateCrient, resultCustomersId.rows[0].daysRented, rentDate);
 
         // vendo se ha dias atrazados
         if (Delay > 0) {
             delayFeef = Delay * (resultCustomersId.rows[0].originalPrice / resultCustomersId.rows[0].daysRented);
-
         } else {
             delayFeef = 0;
-        }
+        };
 
         // se tudo estiver certo manda pra api
         const insertPutRents = await db.query(`
         UPDATE rentals SET "returnDate" = $1 , "delayFee" = $2 WHERE id = $3;
         ` , [rentDate, delayFeef, id]);
 
-
         return res.sendStatus(200);
 
     } catch (err) {
         res.status(500).send(err.message)
-
-    }
-}
+    };
+};
 
 export async function rentsDelete(req, res) {
     const { id } = req.params
@@ -220,22 +215,20 @@ export async function rentsDelete(req, res) {
         // verificando de o id exixste
         if (resultIdDelete.rows.length === 0) {
             return res.sendStatus(404);
-        }
+        };
 
         // vericando se o aluguel ja foi entregue
         if (resultIdDelete.rows[0].returnDate === null) {
             return res.sendStatus(400);
-        }
+        };
 
         // se tudo der certo axclui da api
         const deleteOk = await db.query(
             ` DELETE FROM rentals WHERE id = $1`, [id]);
 
         return res.sendStatus(200);
+
     } catch (err) {
-        res.status(500).send(err.message)
-
-    }
-
-
-}
+        res.status(500).send(err.message);
+    };
+};
