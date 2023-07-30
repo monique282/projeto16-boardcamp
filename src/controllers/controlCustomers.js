@@ -8,7 +8,7 @@ import { parseISO, format } from 'date-fns';
 export async function customersGet(req, res) {
 
     // pegando os dados por query
-    const { cpf } = red.query;
+    const { cpf } = req.query;
 
     try {
 
