@@ -77,6 +77,7 @@ export async function rentsGet(req, res) {
     };
 };
 
+// essa função aqui é enviado  um post para cadastrar uma reserva
 export async function rentsPost(req, res) {
     // pegar os dados que a pessoa colocou na tela de alugueis
     const { customerId, gameId, daysRented } = req.body;
@@ -163,8 +164,11 @@ export async function rentsPost(req, res) {
     };
 };
 
+// variaveis globais
 let Delay = 0;
 let delayFeef = 0;
+
+// essa função é usada para fazer o calculo de quantos dias teve de atraso na entrega do jogo
 function adicionarDias(deliveryDate, days, rentDate) {
     let initialDate = new Date(deliveryDate);
 
@@ -187,6 +191,7 @@ function adicionarDias(deliveryDate, days, rentDate) {
     Delay = differenceInMilliseconds / millisecondsPerDay;
 };
 
+// essa função serve para fazer a entrega do jogo
 export async function rentsPostID(req, res) {
     // pegar os dados que a pessoa colocou na tela de alugueis
     const { id } = req.params;
@@ -237,6 +242,7 @@ export async function rentsPostID(req, res) {
     };
 };
 
+// essa função serve pra apagar o aluguel, sendo ele ja entregue
 export async function rentsDelete(req, res) {
     const { id } = req.params
 
