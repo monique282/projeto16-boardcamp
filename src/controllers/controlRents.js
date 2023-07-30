@@ -9,22 +9,43 @@ import dayjs from 'dayjs';
 export async function rentsGet(req, res) {
 
     // pegando os dados pelo query
-    const { customerId , gameId} = req.query
+    const { customerId, gameId } = req.query
 
     try {
         let rentsRequest = [];
 
         // testando se os dados do query são validos
+        // vendo pelo customerId
         if (typeof customerId !== 'undefined' && customerId !== '') {
-            result = await db.query(`SELECT * FROM rentals WHERE name LIKE $1;`, [`${customerId}%`]);
-        } else {
-            result = await db.query(`SELECT rentals.* , 
+            rentsRequest = await db.query(`SELECT rentals.* , 
+            json_build_object('id', customers.id, 'name',customers.name) AS customer, 
+            json_build_object('id', games.id, 'name',games.name) AS game
+            FROM rentals
+            JOIN customers ON rentals."customerId" = customers.id
+            JOIN games ON rentals."gameId" = games.id
+            WHERE "customerId"= $1;`, [customerId]);
+        } else
+
+            // vendo pelo gameId
+            if (typeof gameId !== 'undefined' && gameId !== '') {
+                rentsRequest = await db.query(`SELECT rentals.* , 
+            json_build_object('id', customers.id, 'name',customers.name) AS customer, 
+            json_build_object('id', games.id, 'name',games.name) AS game
+            FROM rentals
+            JOIN customers ON rentals."customerId" = customers.id
+            JOIN games ON rentals."gameId" = games.id
+            WHERE "gameId"= $1 ;`, [gameId]);
+            }
+
+            // por nenhum dos dois
+            else {
+                rentsRequest = await db.query(`SELECT rentals.* , 
             json_build_object('id', customers.id, 'name',customers.name) AS customer, 
             json_build_object('id', games.id, 'name',games.name) AS game
             FROM rentals
             JOIN customers ON rentals."customerId" = customers.id
             JOIN games ON rentals."gameId" = games.id;`);
-        };
+            };
 
 
         const updatedData = rentsRequest.rows.map(date => {
