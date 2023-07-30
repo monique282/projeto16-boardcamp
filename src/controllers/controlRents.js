@@ -229,6 +229,12 @@ export async function rentsDelete(req, res) {
             return res.sendStatus(400);
         }
 
+        // se tudo der certo axclui da api
+        const deleteOk = await db.query(
+            ` DELETE FROM rentals WHERE id = $1`, [id]);
+
+
+
         return res.sendStatus(200);
     } catch (err) {
         res.status(500).send(err.message)
