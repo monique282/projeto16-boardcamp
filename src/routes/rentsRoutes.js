@@ -1,7 +1,5 @@
 import { Router } from "express";
-
 import { rentsDelete, rentsGet, rentsPost, rentsPostID } from "../controllers/controlRents.js";
-
 
 const rentsRouter = Router();
 
