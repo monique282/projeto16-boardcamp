@@ -154,13 +154,11 @@ function adicionarDias(deliveryDate, days, rentDate) {
     const dat2 = new Date(formatDateCrient);
 
     // Calcular a diferença em milissegundos
-    const differenceInMilliseconds = dat1 - dat2;
+    const differenceInMilliseconds = dat1 - formatDateCrient;
 
     // Converter a diferença de milissegundos para dias
     const millisecondsPerDay = 24 * 60 * 60 * 1000; // 1 dia tem 24 horas, 60 minutos, 60 segundos e 1000 milissegundos
     Delay = differenceInMilliseconds / millisecondsPerDay;
-   
-
 
 }
 
@@ -173,6 +171,8 @@ export async function rentsPostID(req, res) {
         // verificar se o aluguel que a pessoa quer finalizar existe
         const resultCustomersId = await db.query(
             `SELECT * FROM rentals WHERE id = $1;`, [id]);
+
+        // verificando se existe
         if (resultCustomersId.rows.length === 0) {
             return res.sendStatus(404);
         }
@@ -192,21 +192,20 @@ export async function rentsPostID(req, res) {
 
         // chamando função que faz o claculo so atrado
         adicionarDias(formatDateCrient, resultCustomersId.rows[0].daysRented, rentDate)
-
-        console.log(Delay)
+    
         // vendo se ha dias atrazados
         if (Delay > 0) {
             delayFeef = Delay * (resultCustomersId.rows[0].originalPrice / resultCustomersId.rows[0].daysRented);
-          
-        }else{
-            delayFeef =0;
+
+        } else {
+            delayFeef = 0;
         }
 
         // se tudo estiver certo manda pra api
         const insertPutRents = await db.query(`
         UPDATE rentals SET "returnDate" = $1 , "delayFee" = $2 WHERE id = $3;
         ` , [rentDate, delayFeef, id]);
-        
+
 
         return res.sendStatus(200);
 
