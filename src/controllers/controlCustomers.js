@@ -8,18 +8,41 @@ import { parseISO, format } from 'date-fns';
 export async function customersGet(req, res) {
 
     // pegando os dados por query
-    const { cpf } = req.query;
+    const { cpf, offset, limit } = req.query;
 
     try {
 
         let result = [];
 
         // testando se os dados do query são validos
-        if (typeof cpf !== 'undefined' && cpf !== '') {
-            result = await db.query(`SELECT * FROM customers WHERE name LIKE $1;`, [`${cpf}%`]);
-        } else {
-            result = await db.query(`SELECT * FROM customers;`);
-        };
+        if (typeof cpf !== 'undefined' && cpf !== '' &&
+            typeof offset !== 'undefined' && offset !== '' &&
+            typeof limit !== 'undefined' && limit !== '') {
+            result = await db.query(`SELECT * FROM customers WHERE cpf LIKE $1 OFFSET $2 LIMIT $3;`, [`${cpf}%`, offset, limit]);
+        } else
+            if (typeof cpf !== 'undefined' && cpf !== '' &&
+                typeof offset !== 'undefined' && offset !== '') {
+                result = await db.query(`SELECT * FROM customers WHERE cpf LIKE $1 OFFSET $2 ;`, [`${cpf}%`, offset]);
+            } else
+                if (typeof cpf !== 'undefined' && cpf !== '' &&
+                    typeof limit !== 'undefined' && limit !== '') {
+                    result = await db.query(`SELECT * FROM customers WHERE cpf LIKE $1 LIMIT $2;`, [`${cpf}%`, limit]);
+                } else
+                    if (typeof offset !== 'undefined' && offset !== '' &&
+                        typeof limit !== 'undefined' && limit !== '') {
+                        result = await db.query(`SELECT * FROM customers OFFSET $1 LIMIT $2 ;`, [offset, limit])
+                    } else
+                        if (typeof offset !== 'undefined' && offset !== '') {
+                            result = await db.query(`SELECT * FROM customers OFFSET $1 ;`, [offset])
+                        } else
+                            if (typeof limit !== 'undefined' && limit !== '') {
+                                result = await db.query(`SELECT * FROM customers LIMIT $1 ;`, [limit])
+                            } else
+                                if (typeof cpf !== 'undefined' && cpf !== '') {
+                                    result = await db.query(`SELECT * FROM customers WHERE cpf LIKE $1;`, [`${cpf}%`]);
+                                } else {
+                                    result = await db.query(`SELECT * FROM customers ;`)
+                                }
 
         // tratando a data para vim no formato correto
         const updatedData = result.rows.map(date => {
