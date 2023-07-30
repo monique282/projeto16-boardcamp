@@ -210,8 +210,16 @@ export async function rentsPostID(req, res) {
 }
 
 export async function rentsDelete(req, res) {
+    const { id } = req.params
 
     try {
+
+        const resultIdDelete = await db.query(
+            `SELECT * FROM rentals WHERE id = $1;`, [id]);
+        if (resultIdDelete.rows.length === 0) {
+            return res.sendStatus(404);
+        }
+
         return res.sendStatus(200);
     } catch (err) {
         res.status(500).send(err.message)
