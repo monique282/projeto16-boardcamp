@@ -138,6 +138,7 @@ export async function rentsPost(req, res) {
 }
 
 let Delay = 0;
+let delayFeef = 0;
 function adicionarDias(deliveryDate, days, rentDate) {
     let initialDate = new Date(deliveryDate);
 
@@ -190,18 +191,17 @@ export async function rentsPostID(req, res) {
 
         // chamando função que faz o claculo so atrado
         adicionarDias(formatDateCrient, resultCustomersId.rows[0].daysRented, rentDate)
-
-        const delayFee = 0;
+      
 
         // vendo se ha dias atrazados
         if (Delay > 0) {
-            delayFee = Delay * (resultCustomersId.rows[0].originalPrice / resultCustomersId.rows[0].daysRented);
+            delayFeef = Delay * (resultCustomersId.rows[0].originalPrice / resultCustomersId.rows[0].daysRented);
         }
 
         // se tudo estiver certo manda pra api
         const insertPutRents = await db.query(`
         UPDATE rentals SET "returnDate" = $1 , "delayFee" = $2 WHERE id = $3;
-        ` , [rentDate, delayFee, id]);
+        ` , [rentDate, delayFeef,  id]);
 
         return res.sendStatus(200);
 
