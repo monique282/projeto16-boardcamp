@@ -3,8 +3,6 @@ import { customersGet, customersGetId, customersPost, customersPut } from "../co
 import { customersTable } from "../schemas/customersSchema.js";
 import { validateJoiForAll } from "../middlewares/validateSchema.js";
 
-
-
 const customerRouter = Router();
 
 customerRouter.get("/customers", customersGet);
