@@ -4,7 +4,6 @@
 import { db } from "../database/db.js";
 import dayjs from 'dayjs';
 
-
 // essa função aqui é enviado por um get para pegar a lista de alugueis
 export async function rentsGet(req, res) {
     try {
@@ -14,8 +13,6 @@ export async function rentsGet(req, res) {
         FROM rentals
         JOIN customers ON rentals."customerId" = customers.id
         JOIN games ON rentals."gameId" = games.id;
-
-        
         `)
 
         const updatedData = rentsRequest.rows.map(date => {
@@ -30,25 +27,21 @@ export async function rentsGet(req, res) {
                     returnDate: formatDateGiveBack
                 }
             }
+
             if (date.returnDate === null) {
                 const dateCorretCrient = new Date(date.rentDate);
                 const formatDateCrient = dateCorretCrient.toISOString().split('T')[0];
                 return {
                     ...date,
                     rentDate: formatDateCrient
-
                 }
             }
-
         });
-
-
         res.send(updatedData);
 
     } catch (err) {
         res.status(500).send(err.message)
     }
-
 }
 
 export async function rentsPost(req, res) {
@@ -56,7 +49,6 @@ export async function rentsPost(req, res) {
     const { customerId, gameId, daysRented } = req.body;
 
     try {
-
         // vamos ver se customerId é de um cliente cadastrado
         // pegando a lista de clientes
         const resultCustomers = await db.query(
@@ -67,32 +59,35 @@ export async function rentsPost(req, res) {
             if (parseInt(item.id) === parseInt(customerId)) {
                 customerIdExiste = false;
                 return;
-            }
+            };
         });
+
         if (customerIdExiste) {
             return res.sendStatus(409);
-        }
+        };
 
         // vamos ver se gameId é de um jogo cadastrado
         // pegando a lista de jogos
         const resultGames = await db.query(
             `SELECT * FROM games;`);
+
         // verificar de o valor fornecido de gameId existe no resultGames
         let gamesIdExiste = true;
         resultGames.rows.forEach(item => {
             if (parseInt(item.id) === parseInt(gameId)) {
                 gamesIdExiste = false;
                 return;
-            }
+            };
         });
+
         if (gamesIdExiste) {
             return res.sendStatus(409);
-        }
+        };
 
         // verificar se daysRented é maior que 0
         if (daysRented <= 0) {
             return res.sendStatus(400);
-        }
+        };
 
         // enviar a data atual no rendDate
         const rentDate = dayjs().format('YYYY-MM-DD');
@@ -102,6 +97,7 @@ export async function rentsPost(req, res) {
 
         // pegando a lista de jogos
         const result = await db.query(`SELECT * FROM games WHERE id=$1;`, [parseInt(gameId)]);
+
         // salvando o valor do jogo pela quantidada de dias alugados
         const originalPrice = (result.rows[0].pricePerDay) * (parseInt(daysRented));
 
@@ -115,23 +111,21 @@ export async function rentsPost(req, res) {
         const isAvailable = resultRents.rows.map(item => {
             if (item.gameId && returnDate === null) {
                 i++
-            }
+            };
         });
 
         if (parseInt(i) >= parseInt(result.rows[0].stockTotal)) {
             return res.sendStatus(400);
         };
 
-
         // se tivertudo certo enviar para o Api
         const insertRentals = await db.query(`
             INSERT INTO rentals ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee") VAlUES ($1, $2, $3, $4, $5, $6, $7);
             ` , [customerId, gameId, rentDate, daysRented, returnDate, originalPrice, delayFee]);
 
-
         return res.sendStatus(201);
-
-    } catch (err) {
+    }
+    catch (err) {
         res.status(500).send(err.message)
 
     }
@@ -153,8 +147,8 @@ function adicionarDias(deliveryDate, days, rentDate) {
     const dat1 = new Date(rentDate);
     const dat2 = new Date(formatDateCrient);
 
-    // Calcular a diferença em milissegundos
-    const differenceInMilliseconds = dat1 - formatDateCrient;
+    // Calcular a diferença em milissegundos 
+    const differenceInMilliseconds = dat1 - dat2;
 
     // Converter a diferença de milissegundos para dias
     const millisecondsPerDay = 24 * 60 * 60 * 1000; // 1 dia tem 24 horas, 60 minutos, 60 segundos e 1000 milissegundos
@@ -192,7 +186,7 @@ export async function rentsPostID(req, res) {
 
         // chamando função que faz o claculo so atrado
         adicionarDias(formatDateCrient, resultCustomersId.rows[0].daysRented, rentDate)
-    
+
         // vendo se ha dias atrazados
         if (Delay > 0) {
             delayFeef = Delay * (resultCustomersId.rows[0].originalPrice / resultCustomersId.rows[0].daysRented);
