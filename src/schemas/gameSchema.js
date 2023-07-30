@@ -8,5 +8,4 @@ export const gameTable = joi.object({
     stockTotal: joi.number().min(1).required(),
     // preço por dia
     pricePerDay: joi.number().min(1).required(),
-
-})
+});
