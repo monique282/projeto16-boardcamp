@@ -11,8 +11,15 @@ export async function gameGet(req, res) {
     const { name } = red.query;
 
     try {
-        
-        const result = await db.query(`SELECT * FROM games;`);
+        let result = [];
+
+        // testando se os dados do query são validos
+        if (typeof name !== 'undefined' && name !== '') {
+            result = await db.query(`SELECT * FROM games WHERE name LIKE $1;`, [`${name}%`]);
+        } else {
+            result = await db.query(`SELECT * FROM games;`);
+        };
+
         const gameRequest = result.rows;
         res.send(gameRequest);
     } catch (err) {
