@@ -8,17 +8,38 @@ import { db } from "../database/db.js";
 export async function gameGet(req, res) {
 
     // pegando os dados por query
-    const { name } = req.query;
+    const { name, offset, limit } = req.query;
 
     try {
         let result = [];
 
         // testando se os dados do query são validos
-        if (typeof name !== 'undefined' && name !== '') {
-            result = await db.query(`SELECT * FROM games WHERE name LIKE $1;`, [`${name}%`]);
-        } else {
-            result = await db.query(`SELECT * FROM games;`);
-        };
+        if (typeof name !== 'undefined' && name !== '' &&
+            typeof offset !== 'undefined' && offset !== '' &&
+            typeof limit !== 'undefined' && limit !== '') {
+            result = await db.query(`SELECT * FROM games WHERE name LIKE $1 OFFSET $2 LIMIT $3;`, [`${name}%`, offset, limit]);
+        } else
+            if (typeof name !== 'undefined' && name !== '' &&
+                typeof offset !== 'undefined' && offset !== '') {
+                result = await db.query(`SELECT * FROM games WHERE name LIKE $1 OFFSET $2 ;`, [`${name}%`, offset]);
+            } else
+                if (typeof name !== 'undefined' && name !== '' &&
+                    typeof limit !== 'undefined' && limit !== '') {
+                    result = await db.query(`SELECT * FROM games WHERE name LIKE $1 LIMIT $2;`, [`${name}%`, limit]);
+                } else
+                    if (typeof offset !== 'undefined' && offset !== '' &&
+                        typeof limit !== 'undefined' && limit !== '') {
+                        result = await db.query(`SELECT * FROM games OFFSET $1 LIMIT $2 ;`, [offset, limit])
+                    } else
+                        if (typeof offset !== 'undefined' && offset !== '') {
+                            result = await db.query(`SELECT * FROM games OFFSET $1 ;`, [offset])
+                        } else
+                            if (typeof limit !== 'undefined' && limit !== '') {
+                                result = await db.query(`SELECT * FROM games OFFSET $1 ;`, [limit])
+                            } else {
+                                result = await db.query(`SELECT * FROM games ;`)
+                            }
+
 
         const gameRequest = result.rows;
         res.send(gameRequest);
