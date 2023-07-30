@@ -1,11 +1,15 @@
 // esse arquivo aqui serve para executar todas as funções que eu preciso
 // esse arquivo é chamado la em rentsRoutes
 
+import { query } from "express";
 import { db } from "../database/db.js";
 import dayjs from 'dayjs';
 
 // essa função aqui é enviado por um get para pegar a lista de alugueis
 export async function rentsGet(req, res) {
+
+    // pegando os dados pelo query
+    const { customerId , gameId} = req.query
     try {
         const rentsRequest = await db.query(`SELECT rentals.* , 
         json_build_object('id', customers.id, 'name',customers.name) AS customer, 
