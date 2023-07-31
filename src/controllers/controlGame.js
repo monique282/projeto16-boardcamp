@@ -7,7 +7,7 @@ import { db } from "../database/db.js";
 export async function gameGet(req, res) {
 
     // pegando os dados por query
-    const { name, offset, limit } = req.query;
+    const { name, offset, limit, order } = req.query;
 
     try {
 
@@ -43,6 +43,17 @@ export async function gameGet(req, res) {
                     query += ' LIMIT $3';
                 }
         };
+
+        // Verificação para ordenação
+        if (typeof order !== 'undefined' && order !== '') {
+            const validColumns = ['name', 'release_date', 'genre']; // Colunas válidas para ordenação
+            if (validColumns.includes(order)) {
+                query += ` ORDER BY ${order} ASC`;
+            } else {
+                res.status(400).send('Parâmetro de ordenação inválido.');
+                return;
+            }
+        }
 
         const result = await db.query(query, queryParams);
         const gameRequest = result.rows;

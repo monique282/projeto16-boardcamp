@@ -9,10 +9,11 @@ import dayjs from 'dayjs';
 export async function rentsGet(req, res) {
 
     // pegando os dados pelo query
-    const { customerId, gameId, offset, limit } = req.query
+    const { customerId, gameId, offset, limit } = req.query;
 
     try {
-
+        
+        const queryParams = [];
         let query = `SELECT rentals.* , 
         json_build_object('id', customers.id, 'name',customers.name) AS customer, 
         json_build_object('id', games.id, 'name',games.name) AS game
