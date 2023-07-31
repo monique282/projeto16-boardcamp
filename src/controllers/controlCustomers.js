@@ -45,7 +45,7 @@ export async function customersGet(req, res) {
 
                 // adiciona o parâmetro de ordenação e coloca na posição sua posição no array
                 const orderParam = queryParams.length;
-                query += ` ORDER BY $${orderParam} ASC`;
+                query += ` ORDER BY $${orderParam} `;
                 // verificando se é ordem descendente (desc)
                 if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
                     query += ' DESC';
