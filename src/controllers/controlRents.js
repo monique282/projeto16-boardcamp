@@ -92,6 +92,23 @@ export async function rentsGet(req, res) {
             return;
         }
 
+        // selecioando por startDate
+    if (typeof startDate !== 'undefined') {
+        const startDateValue = new Date(startDate);
+        if (isNaN(startDateValue)) {
+            res.status(400).send('Formato de data inválido para startDate.');
+            return;
+        }
+
+        // Convertendo a data para o formato ISO (YYYY-MM-DD) para uso na consulta SQL
+        const formattedStartDate = startDateValue.toISOString().split('T')[0];
+
+        if (queryParams.length > 0) {
+            query += ` AND "rentDate" >= '${formattedStartDate}'`;
+        } else {
+            query += ` WHERE "rentDate" >= '${formattedStartDate}'`;
+        }
+    }
 
         // juntando tudo para linha ficar de modo correto
         const result = await db.query(query, queryParams);
