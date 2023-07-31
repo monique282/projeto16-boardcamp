@@ -10,38 +10,41 @@ export async function gameGet(req, res) {
     const { name, offset, limit } = req.query;
 
     try {
-        let result = [];
 
-        // testando se os dados do query são validos
-        if (typeof name !== 'undefined' && name !== '' &&
-            typeof offset !== 'undefined' && offset !== '' &&
-            typeof limit !== 'undefined' && limit !== '') {
-            result = await db.query(`SELECT * FROM games WHERE name LIKE $1 OFFSET $2 LIMIT $3;`, [`${name}%`, offset, limit]);
-        } else
-            if (typeof name !== 'undefined' && name !== '' &&
-                typeof offset !== 'undefined' && offset !== '') {
-                result = await db.query(`SELECT * FROM games WHERE name LIKE $1 OFFSET $2 ;`, [`${name}%`, offset]);
+        let query = 'SELECT * FROM games';
+        const queryParams = [];
+
+        // Verificando os parâmetros enviados pela query são validos
+        // verificando se name é valido
+        if (typeof name !== 'undefined' && name !== '') {
+            queryParams.push(`${name}%`);
+            query += ' WHERE name LIKE $1';
+        };
+
+        // verificando de offset é valido
+        if (typeof offset !== 'undefined' && offset !== '') {
+            queryParams.push(offset);
+            if (queryParams.length === 1) {
+                query += ' OFFSET $1';
+            } else {
+                query += ' AND OFFSET $2';
+            }
+        };
+
+        //verificando se limit é valido
+        if (typeof limit !== 'undefined' && limit !== '') {
+            queryParams.push(limit);
+            if (queryParams.length === 1) {
+                query += ' LIMIT $1';
             } else
-                if (typeof name !== 'undefined' && name !== '' &&
-                    typeof limit !== 'undefined' && limit !== '') {
-                    result = await db.query(`SELECT * FROM games WHERE name LIKE $1 LIMIT $2;`, [`${name}%`, limit]);
-                } else
-                    if (typeof offset !== 'undefined' && offset !== '' &&
-                        typeof limit !== 'undefined' && limit !== '') {
-                        result = await db.query(`SELECT * FROM games OFFSET $1 LIMIT $2 ;`, [offset, limit])
-                    } else
-                        if (typeof offset !== 'undefined' && offset !== '') {
-                            result = await db.query(`SELECT * FROM games OFFSET $1 ;`, [offset])
-                        } else
-                            if (typeof limit !== 'undefined' && limit !== '') {
-                                result = await db.query(`SELECT * FROM games LIMIT $1 ;`, [limit])
-                            } else
-                                if (typeof name !== 'undefined' && name !== '') {
-                                    result = await db.query(`SELECT * FROM games WHERE name LIKE $1;`, [`${name}%`]);
-                                } else {
-                                    result = await db.query(`SELECT * FROM games ;`)
-                                };
+                if (queryParams.length === 2) {
+                    query += ' AND LIMIT $2';
+                } else {
+                    query += ' AND LIMIT $3';
+                }
+        };
 
+        const result = await db.query(query, queryParams);
         const gameRequest = result.rows;
         res.send(gameRequest);
     } catch (err) {
