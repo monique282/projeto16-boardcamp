@@ -86,7 +86,6 @@ export async function rentsGet(req, res) {
         // verificando se offset é valido
         if (typeof offset !== 'undefined' && offset !== '') {
             queryParams.push(offset);
-            //conditions.push(` OFFSET $` + queryParams.length);
             query += ' OFFSET $' + queryParams.length;
         };
 
@@ -94,8 +93,7 @@ export async function rentsGet(req, res) {
         if (typeof limit !== 'undefined' && limit !== '') {
             queryParams.push(limit);
             query += ' LIMIT $' + queryParams.length;
-            //conditions.push(` LIMIT $` + queryParams.length);
-           // conditions.push(` LIMIT $${queryParams.length}`);
+
         };
 
         // juntando tudo para linha ficar de modo correto
@@ -128,9 +126,7 @@ export async function rentsGet(req, res) {
         res.send(updatedData);
 
     } catch (err) {
-        return res.sendStatus(500);
-        //return res.status(500).send("Erro ao processar a solicitação de aluguéis. Por favor, tente novamente mais tarde.");
-
+        return res.status(500).send("Erro ao processar a solicitação de aluguéis. Por favor, tente novamente mais tarde.");
     };
 };
 
