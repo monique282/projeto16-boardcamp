@@ -28,7 +28,7 @@ export async function customersGet(req, res) {
             if (queryParams.length === 1) {
                 query += ' OFFSET $1';
             } else {
-                query += ' AND OFFSET $2';
+                query += ' OFFSET $2';
             }
         };
 
@@ -39,9 +39,9 @@ export async function customersGet(req, res) {
                 query += ' LIMIT $1';
             } else
                 if (queryParams.length === 2) {
-                    query += ' AND LIMIT $2';
+                    query += ' LIMIT $2';
                 } else {
-                    query += ' AND LIMIT $3';
+                    query += ' LIMIT $3';
                 }
         };
 

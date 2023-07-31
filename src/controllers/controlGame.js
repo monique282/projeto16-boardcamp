@@ -38,9 +38,9 @@ export async function gameGet(req, res) {
                 query += ' LIMIT $1';
             } else
                 if (queryParams.length === 2) {
-                    query += ' AND LIMIT $2';
+                    query += ' LIMIT $2';
                 } else {
-                    query += ' AND LIMIT $3';
+                    query += ' LIMIT $3';
                 }
         };
 
