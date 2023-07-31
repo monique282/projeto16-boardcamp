@@ -34,8 +34,9 @@ export async function customersGet(req, res) {
             query += ' LIMIT $' + queryParams.length;
         };
 
-         //verificando se order é valido
-         if (typeof order !== 'undefined' && order !== '') {
+        // ordenação
+        //verificando se order é valido
+        if (typeof order !== 'undefined' && order !== '') {
 
             // todas as colunas válidas para ordenação
             const validColumns = ['name', 'id', 'cpf'];

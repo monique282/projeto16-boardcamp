@@ -38,14 +38,35 @@ export async function rentsGet(req, res) {
         if (typeof offset !== 'undefined' && offset !== '') {
             queryParams.push(offset);
             query += ' OFFSET $' + queryParams.length;
-        }
+        };
 
         //verificando se limit é valido
         if (typeof limit !== 'undefined' && limit !== '') {
             queryParams.push(limit);
             query += ' LIMIT $' + queryParams.length;
-        }
+        };
 
+        // ordenação
+        //verificando se order é valido
+        if (typeof order !== 'undefined' && order !== '') {
+
+            // todas as colunas válidas para ordenação
+            const validColumns = ['name', 'id', 'cpf','customerId', 'customer', 'game'];
+            if (validColumns.includes(order)) {
+                queryParams.push(order);
+
+                // adiciona o parâmetro de ordenação e coloca na posição sua posição no array
+                const orderParam = queryParams.length;
+                query += ` ORDER BY $${orderParam} ASC`;
+                // verificando se é ordem descendente (desc)
+                if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
+                    query += ' DESC';
+                };
+            } else {
+                res.status(400).send('Parâmetro de ordenação inválido.');
+                return;
+            }
+        }
 
         // juntando tudo para linha ficar de modo correto
         const result = await db.query(query, queryParams);
