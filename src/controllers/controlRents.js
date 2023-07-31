@@ -82,7 +82,7 @@ export async function rentsGet(req, res) {
             open: ' "returnDate" IS NULL',
             closed: ' "returnDate" IS NOT NULL'
         };
-        
+
         // filtragem por status
         if (typeof status !== 'undefined' && status in statusFilters) {
             conditions.push(statusFilters[status]);
@@ -125,7 +125,8 @@ export async function rentsGet(req, res) {
         res.send(updatedData);
 
     } catch (err) {
-        res.status(500).send(err.message)
+        return res.status(500).send("Erro ao processar a solicitação de aluguéis. Por favor, tente novamente mais tarde.");
+
     };
 };
 
@@ -139,6 +140,7 @@ export async function rentsPost(req, res) {
         // pegando a lista de clientes
         const resultCustomers = await db.query(
             `SELECT * FROM customers;`);
+            
         // verificar de o valor fornecido de customerId existe no resultCustomers
         let customerIdExiste = true;
         resultCustomers.rows.forEach(item => {
@@ -149,7 +151,7 @@ export async function rentsPost(req, res) {
         });
 
         if (customerIdExiste) {
-            return res.sendStatus(409);
+            return res.status(409).send('Usuário não existe.');
         };
 
         // vamos ver se gameId é de um jogo cadastrado
@@ -167,12 +169,13 @@ export async function rentsPost(req, res) {
         });
 
         if (gamesIdExiste) {
-            return res.sendStatus(409);
+            return res.status(409).send('Jogo não existe.');
         };
 
         // verificar se daysRented é maior que 0
         if (daysRented <= 0) {
             return res.sendStatus(400);
+            
         };
 
         // enviar a data atual no rendDate
@@ -201,7 +204,7 @@ export async function rentsPost(req, res) {
         });
 
         if (parseInt(i) >= parseInt(result.rows[0].stockTotal)) {
-            return res.sendStatus(400);
+            return res.status(400).send('Jogo não disponível para alugel.');
         };
 
         // se tivertudo certo enviar para o Api
@@ -256,12 +259,12 @@ export async function rentsPostID(req, res) {
 
         // verificando se existe
         if (resultCustomersId.rows.length === 0) {
-            return res.sendStatus(404);
+            return res.status(404).send('Aliguel não existe.');
         };
 
         // vericando se o aluguel ja foi entregue
         if (resultCustomersId.rows[0].returnDate !== null) {
-            return res.sendStatus(400);
+            return res.status(400).send('Aluguel já entregue.');
         };
 
         // enviar a data atual no rendDate
@@ -290,7 +293,7 @@ export async function rentsPostID(req, res) {
         return res.sendStatus(200);
 
     } catch (err) {
-        res.status(500).send(err.message)
+         return res.status(500).send("Erro ao finalizar o aluguel. Por favor, tente novamente mais tarde.");
     };
 };
 
@@ -303,14 +306,14 @@ export async function rentsDelete(req, res) {
         const resultIdDelete = await db.query(
             `SELECT * FROM rentals WHERE id = $1;`, [id]);
 
-        // verificando de o id exixste
+        // verificando de o id existe
         if (resultIdDelete.rows.length === 0) {
-            return res.sendStatus(404);
+            return res.status(404).send('Aluguel não existe.');
         };
 
         // vericando se o aluguel ja foi entregue
         if (resultIdDelete.rows[0].returnDate === null) {
-            return res.sendStatus(400);
+            return res.status(400).send('Alugado já entregue.');
         };
 
         // se tudo der certo axclui da api
@@ -320,6 +323,6 @@ export async function rentsDelete(req, res) {
         return res.sendStatus(200);
 
     } catch (err) {
-        res.status(500).send(err.message);
+       return res.status(500).send("Erro ao excluir o aluguel. Por favor, tente novamente mais tarde.");
     };
 };
