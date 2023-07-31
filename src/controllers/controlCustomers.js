@@ -48,7 +48,7 @@ export async function customersGet(req, res) {
                 //se desc for true adicione DESC à consulta
                 if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
                     console.log("ate aqui desc")
-                    query += ' DESC';
+                    query += ' DESC ';
                 }
             } else {
                 res.status(400).send('Parâmetro de ordenação inválido.');
