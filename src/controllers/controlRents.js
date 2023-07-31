@@ -51,18 +51,17 @@ export async function rentsGet(req, res) {
         // ordenação
         //verificando se order é valido
         if (typeof order !== 'undefined' && order !== '') {
-
+            
             // todas as colunas válidas para ordenação
             const validColumns = ['name', 'id', 'cpf', 'customerId', 'customer', 'game'];
             if (validColumns.includes(order)) {
-                queryParams.push(order);
-
-                // adiciona o parâmetro de ordenação e coloca na posição sua posição no array
-                const orderParam = queryParams.length;
-                query += ` ORDER BY $${orderParam} `;
-                // verificando se é ordem descendente (desc)
+                // adiciona o parâmetro de ordenação
+                query += ' ORDER BY ' + order;
+        
+                // If desc is 'true', add DESC to the query
                 if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
-                    query += ` DESC`;
+                    console.log("ate aqui desc")
+                    query += ' DESC';
                 }
             } else {
                 res.status(400).send('Parâmetro de ordenação inválido.');
@@ -96,6 +95,7 @@ export async function rentsGet(req, res) {
                 };
             };
         });
+        
         res.send(updatedData);
 
     } catch (err) {
