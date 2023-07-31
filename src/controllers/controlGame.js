@@ -43,7 +43,7 @@ export async function gameGet(req, res) {
             if (validColumns.includes(order)) {
 
                 // adiciona o parâmetro de ordenação
-                query += ' ORDER BY ' + order;
+                query += ' ORDER BY "' + order + '"'
         
                 //se desc for true adicione DESC à consulta
                 if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {

@@ -54,10 +54,11 @@ export async function rentsGet(req, res) {
 
             // todas as colunas válidas para ordenação
             const validColumns = ['id', "customerId", "gameId","rentDate", "daysRented", "returnDate", "originalPrice", "delayFee"];
+           console.log(order);
             if (validColumns.includes(order)) {
 
                 // adiciona o parâmetro de ordenação
-                query += ' ORDER BY ' + order;
+                query += ' ORDER BY "' + order + '"'
 
                 //se desc for true adicione DESC à consulta
                 if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
@@ -72,7 +73,7 @@ export async function rentsGet(req, res) {
 
         // juntando tudo para linha ficar de modo correto
         const result = await db.query(query, queryParams);
-
+        console.log(query);
         // tratando a data para vim no formato correto
         const updatedData = result.rows.map(date => {
             if (date.returnDate !== null) {
