@@ -19,7 +19,7 @@ export async function rentsGet(req, res) {
         json_build_object('id', games.id, 'name',games.name) AS game
         FROM rentals
         JOIN customers ON rentals."customerId" = customers.id
-        JOIN games ON rentals."gameId" = games.id'
+        JOIN games ON rentals."gameId" = games.id
         `;
 
         // Verificando os parâmetros enviados pela query são validos
@@ -37,31 +37,21 @@ export async function rentsGet(req, res) {
         // verificando de offset é valido
         if (typeof offset !== 'undefined' && offset !== '') {
             queryParams.push(offset);
-            if (queryParams.length === 1) {
-                query += ' OFFSET $1';
-            } else {
-                query += ' OFFSET $2';
-            }
-        };
+            query += ' OFFSET $' + queryParams.length;
+        }
 
-        //verificando se limit é valido
+                //verificando se limit é valido
         if (typeof limit !== 'undefined' && limit !== '') {
             queryParams.push(limit);
-            if (queryParams.length === 1) {
-                query += ' LIMIT $1';
-            } else
-                if (queryParams.length === 2) {
-                    query += ' LIMIT $2';
-                } else {
-                    query += ' LIMIT $3';
-                }
-        };
+            query += ' LIMIT $' + queryParams.length;
+        }
+
 
         // juntando tudo para linha ficar de modo correto
         const result = await db.query(query, queryParams);
 
         // tratando a data para vim no formato correto
-        const updatedData = rentsRequest.rows.map(date => {
+        const updatedData = result.rows.map(date => {
             if (date.returnDate !== null) {
                 const dateCorretCrient = new Date(date.rentDate);
                 const dateCorretGiveBack = new Date(date.returnDate);
