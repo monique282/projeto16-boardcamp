@@ -51,10 +51,9 @@ export async function customersGet(req, res) {
                     query += ' DESC ';
                 }
             } else {
-                res.status(400).send('Parâmetro de ordenação inválido.');
-                return;
-            }
-        }
+                return res.status(400).send('Parâmetro de ordenação inválido.');
+            };
+        };
 
         // juntando tudo para linha ficar de modo correto
         const result = await db.query(query, queryParams);
@@ -72,8 +71,7 @@ export async function customersGet(req, res) {
         res.send(updatedData);
 
     } catch (err) {
-        res.status(500).send("Erro ao processar a solicitação. Por favor, tente novamente mais tarde.");
-
+       return res.status(500).send("Erro ao processar a solicitação. Por favor, tente novamente mais tarde.");
     };
 };
 
@@ -89,7 +87,6 @@ export async function customersGetId(req, res) {
         // verificando se o id existe
         if (result.rows.length === 0) {
             return res.status(404).send("Cliente não encontrado.");
-
         };
 
         // tratando a data para vim no formato correto
@@ -106,7 +103,6 @@ export async function customersGetId(req, res) {
 
     } catch (err) {
         return res.status(500).send("Erro ao processar a solicitação. Por favor, tente novamente mais tarde.");
-
     };
 };
 
@@ -134,7 +130,6 @@ export async function customersPost(req, res) {
 
         if (cpfExists) {
             return res.status(409).send("O CPF informado já está cadastrado para outro cliente.");
-
         };
 
         // se tivertudo certo enviar para o Api
@@ -145,7 +140,6 @@ export async function customersPost(req, res) {
 
     } catch (err) {
         return res.status(500).send("Erro ao cadastrar o cliente. Por favor, verifique os dados e tente novamente.");
-
     };
 };
 
@@ -164,7 +158,6 @@ export async function customersPut(req, res) {
         // cpf que quer ser alterado não é do dono
         if (resultCustomers.rows.length !== 0 && resultCustomers.rows[0].id !== parseInt(id)) {
             return res.status(409).send("O CPF informado já está cadastrado para outro cliente.");
-
         };
 
         // se tivertudo certo enviar para o Api
@@ -176,6 +169,5 @@ export async function customersPut(req, res) {
 
     } catch (err) {
         return res.status(500).send("Erro ao atualizar o cliente. Por favor, verifique os dados e tente novamente.");
-
     };
 };

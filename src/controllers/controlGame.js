@@ -52,7 +52,7 @@ export async function gameGet(req, res) {
                 }
             } else {
                 res.status(400).send('Parâmetro de ordenação inválido.');
-                return;
+                return 
             }
         }
 
@@ -87,7 +87,8 @@ export async function gamePost(req, res) {
         });
 
         if (nameExists) {
-            return res.sendStatus(409);
+            return res.status(409).send("O nome do jogo já está cadastrado. Escolha um nome diferente.");
+
         };
 
         const insertGame = await db.query(`
