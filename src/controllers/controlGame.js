@@ -7,7 +7,7 @@ import { db } from "../database/db.js";
 export async function gameGet(req, res) {
 
     // pegando os dados por query
-    const { name, offset, limit, order } = req.query;
+    const { name, offset, limit, order, desc } = req.query;
 
     try {
 
@@ -25,9 +25,8 @@ export async function gameGet(req, res) {
         if (typeof offset !== 'undefined' && offset !== '') {
             queryParams.push(offset);
             query += ' OFFSET $' + queryParams.length;
-           
-        };
 
+        };
 
         //verificando se limit é valido
         if (typeof limit !== 'undefined' && limit !== '') {
@@ -47,6 +46,10 @@ export async function gameGet(req, res) {
                 // adiciona o parâmetro de ordenação e coloca na posição sua posição no array
                 const orderParam = queryParams.length;
                 query += ` ORDER BY $${orderParam} ASC`;
+                // verificando se é ordem descendente (desc)
+                if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
+                    query += ' DESC';
+                }
             } else {
                 res.status(400).send('Parâmetro de ordenação inválido.');
                 return;
