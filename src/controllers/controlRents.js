@@ -53,9 +53,9 @@ export async function rentsGet(req, res) {
         if (typeof order !== 'undefined' && order !== '') {
             
             // todas as colunas válidas para ordenação
-            const validColumns = ['name', 'id', 'cpf', 'customerId', 'customer', 'game'];
+            const validColumns = [ 'id', 'customerId', 'customer', 'game'];
             if (validColumns.includes(order)) {
-                
+
                 // adiciona o parâmetro de ordenação
                 query += ' ORDER BY ' + order;
         

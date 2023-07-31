@@ -39,7 +39,7 @@ export async function gameGet(req, res) {
         if (typeof order !== 'undefined' && order !== '') {
 
             // todas as colunas válidas para ordenação
-            const validColumns = ['name', 'id'];
+            const validColumns = ['name', 'id', 'image'];
             if (validColumns.includes(order)) {
 
                 // adiciona o parâmetro de ordenação
