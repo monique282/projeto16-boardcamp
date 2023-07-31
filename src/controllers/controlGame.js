@@ -24,14 +24,15 @@ export async function gameGet(req, res) {
         // verificando de offset é valido
         if (typeof offset !== 'undefined' && offset !== '') {
             queryParams.push(offset);
-            query += queryParams.length === 1 ? ' OFFSET $1' : ' OFFSET $2';
+            query += ' OFFSET $' + queryParams.length;
+           
         };
 
 
         //verificando se limit é valido
         if (typeof limit !== 'undefined' && limit !== '') {
             queryParams.push(limit);
-            query += queryParams.length === 1 ? ' LIMIT $1' : queryParams.length === 2 ? ' LIMIT $2' : ' LIMIT $3';
+            query += ' LIMIT $' + queryParams.length;
         };
 
         // ordenação
