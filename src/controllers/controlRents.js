@@ -12,25 +12,25 @@ export async function rentsGet(req, res) {
     const { customerId, gameId, offset, limit } = req.query;
 
     try {
-        
+
         const queryParams = [];
         let query = `SELECT rentals.* , 
         json_build_object('id', customers.id, 'name',customers.name) AS customer, 
         json_build_object('id', games.id, 'name',games.name) AS game
         FROM rentals
         JOIN customers ON rentals."customerId" = customers.id
-        JOIN games ON rentals."gameId" = games.id';
-        const queryParams = [];`
+        JOIN games ON rentals."gameId" = games.id'
+        `;
 
         // Verificando os parâmetros enviados pela query são validos
         // verificando se name é valido
         if (typeof customerId !== 'undefined' && customerId !== '') {
-            queryParams.push([customerId]);
+            queryParams.push(customerId);
             query += ' WHERE  "customerId"= $1 ';
         };
 
         if (typeof gameId !== 'undefined' && gameId !== '') {
-            queryParams.push([gameId]);
+            queryParams.push(gameId);
             query += ' WHERE  "gameId"= $1 ';
         };
 

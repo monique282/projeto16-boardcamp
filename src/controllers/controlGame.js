@@ -24,31 +24,28 @@ export async function gameGet(req, res) {
         // verificando de offset é valido
         if (typeof offset !== 'undefined' && offset !== '') {
             queryParams.push(offset);
-            if (queryParams.length === 1) {
-                query += ' OFFSET $1';
-            } else {
-                query += ' OFFSET $2';
-            }
+            query += queryParams.length === 1 ? ' OFFSET $1' : ' OFFSET $2';
         };
+
 
         //verificando se limit é valido
         if (typeof limit !== 'undefined' && limit !== '') {
             queryParams.push(limit);
-            if (queryParams.length === 1) {
-                query += ' LIMIT $1';
-            } else
-                if (queryParams.length === 2) {
-                    query += ' LIMIT $2';
-                } else {
-                    query += ' LIMIT $3';
-                }
+            query += queryParams.length === 1 ? ' LIMIT $1' : queryParams.length === 2 ? ' LIMIT $2' : ' LIMIT $3';
         };
 
-        // Verificação para ordenação
+        // ordenação
+        //verificando se order é valido
         if (typeof order !== 'undefined' && order !== '') {
-            const validColumns = ['name', 'release_date', 'genre']; // Colunas válidas para ordenação
+
+            // todas as colunas válidas para ordenação
+            const validColumns = ['name', 'id'];
             if (validColumns.includes(order)) {
-                query += ` ORDER BY ${order} ASC`;
+                queryParams.push(order);
+
+                // adiciona o parâmetro de ordenação e coloca na posição sua posição no array
+                const orderParam = queryParams.length;
+                query += ` ORDER BY $${orderParam} ASC`;
             } else {
                 res.status(400).send('Parâmetro de ordenação inválido.');
                 return;
