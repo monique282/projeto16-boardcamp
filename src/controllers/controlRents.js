@@ -40,13 +40,15 @@ export async function rentsGet(req, res) {
         // verificando se offset é valido
         if (typeof offset !== 'undefined' && offset !== '') {
             queryParams.push(offset);
-            conditions.push(` OFFSET $${queryParams.length}`);
+            conditions.push(` OFFSET $` + queryParams.length);
+            // query += ' OFFSET $' + queryParams.length;
         };
 
         // verificando se limit é valido
         if (typeof limit !== 'undefined' && limit !== '') {
             queryParams.push(limit);
-            conditions.push(` LIMIT $${queryParams.length}`);
+            conditions.push(` LIMIT $` + queryParams.length);
+           // conditions.push(` LIMIT $${queryParams.length}`);
         };
 
         // ordenação
@@ -140,7 +142,7 @@ export async function rentsPost(req, res) {
         // pegando a lista de clientes
         const resultCustomers = await db.query(
             `SELECT * FROM customers;`);
-            
+
         // verificar de o valor fornecido de customerId existe no resultCustomers
         let customerIdExiste = true;
         resultCustomers.rows.forEach(item => {
@@ -175,7 +177,7 @@ export async function rentsPost(req, res) {
         // verificar se daysRented é maior que 0
         if (daysRented <= 0) {
             return res.sendStatus(400);
-            
+
         };
 
         // enviar a data atual no rendDate
@@ -293,7 +295,7 @@ export async function rentsPostID(req, res) {
         return res.sendStatus(200);
 
     } catch (err) {
-         return res.status(500).send("Erro ao finalizar o aluguel. Por favor, tente novamente mais tarde.");
+        return res.status(500).send("Erro ao finalizar o aluguel. Por favor, tente novamente mais tarde.");
     };
 };
 
@@ -323,6 +325,6 @@ export async function rentsDelete(req, res) {
         return res.sendStatus(200);
 
     } catch (err) {
-       return res.status(500).send("Erro ao excluir o aluguel. Por favor, tente novamente mais tarde.");
+        return res.status(500).send("Erro ao excluir o aluguel. Por favor, tente novamente mais tarde.");
     };
 };
