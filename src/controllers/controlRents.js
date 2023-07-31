@@ -93,7 +93,7 @@ export async function rentsGet(req, res) {
         // verificando se limit é valido
         if (typeof limit !== 'undefined' && limit !== '') {
             queryParams.push(limit);
-            query += ' OFFSET $' + queryParams.length;
+            query += ' LIMIT $' + queryParams.length;
             //conditions.push(` LIMIT $` + queryParams.length);
            // conditions.push(` LIMIT $${queryParams.length}`);
         };
