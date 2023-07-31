@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 export async function rentsGet(req, res) {
 
     // pegando os dados pelo query
-    const { customerId, gameId, offset, limit, order, desc } = req.query;
+    const { customerId, gameId, offset, limit, order, desc, status, startDate } = req.query;
 
 
 
@@ -31,6 +31,7 @@ export async function rentsGet(req, res) {
             query += ' WHERE  "customerId"= $1 ';
         };
 
+        // verificando de gameId é valido
         if (typeof gameId !== 'undefined' && gameId !== '') {
             queryParams.push(gameId);
             query += ' WHERE  "gameId"= $1 ';
@@ -53,8 +54,8 @@ export async function rentsGet(req, res) {
         if (typeof order !== 'undefined' && order !== '') {
 
             // todas as colunas válidas para ordenação
-            const validColumns = ['id', "customerId", "gameId","rentDate", "daysRented", "returnDate", "originalPrice", "delayFee"];
-           console.log(order);
+            const validColumns = ['id', "customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee"];
+            console.log(order);
             if (validColumns.includes(order)) {
 
                 // adiciona o parâmetro de ordenação
@@ -62,7 +63,7 @@ export async function rentsGet(req, res) {
 
                 //se desc for true adicione DESC à consulta
                 if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
-                  
+
                     query += ' DESC ;'
                 }
             } else {
@@ -70,6 +71,27 @@ export async function rentsGet(req, res) {
                 return;
             }
         }
+
+        // filtrando por data
+        // criando uma constante com as rotas
+        const statusFilters = {
+            open: '"returnDate" IS NULL',
+            closed: '"returnDate" IS NOT NULL'
+        };
+
+        //verificando se status é valido
+        // selecioando por status
+        if (typeof status !== 'undefined' && status in statusFilters) {
+            if (queryParams.length > 0) {
+                query += ` AND ${statusFilters[status]}`;
+            } else {
+                query += ` WHERE ${statusFilters[status]}`;
+            }
+        } else if (typeof status !== 'undefined') {
+            res.status(400).send('Parâmetro de status inválido.');
+            return;
+        }
+
 
         // juntando tudo para linha ficar de modo correto
         const result = await db.query(query, queryParams);
