@@ -41,18 +41,14 @@ export async function customersGet(req, res) {
             // todas as colunas válidas para ordenação
             const validColumns = ['name', 'id', 'cpf'];
             if (validColumns.includes(order)) {
-                queryParams.push(order);
 
-                // adiciona o parâmetro de ordenação e coloca na posição sua posição no array
-               
-                // verificando se é ordem descendente (desc)
+                // adiciona o parâmetro de ordenação
+                query += ' ORDER BY ' + order;
+        
+                //se desc for true adicione DESC à consulta
                 if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
-                    queryParams.push(desc);
-                    console.log(desc)
-                    query += ` ORDER BY $${queryParams.length} DESC`;
-                }else{
-                    const orderParam = queryParams.length;
-                    query += ` ORDER BY $${orderParam} ASC`;
+                    console.log("ate aqui desc")
+                    query += ' DESC';
                 }
             } else {
                 res.status(400).send('Parâmetro de ordenação inválido.');

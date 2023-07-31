@@ -55,10 +55,11 @@ export async function rentsGet(req, res) {
             // todas as colunas válidas para ordenação
             const validColumns = ['name', 'id', 'cpf', 'customerId', 'customer', 'game'];
             if (validColumns.includes(order)) {
+                
                 // adiciona o parâmetro de ordenação
                 query += ' ORDER BY ' + order;
         
-                // If desc is 'true', add DESC to the query
+                 //se desc for true adicione DESC à consulta
                 if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
                     console.log("ate aqui desc")
                     query += ' DESC';
