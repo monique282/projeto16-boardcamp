@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 export async function rentsGet(req, res) {
 
     // pegando os dados pelo query
-    const { customerId, gameId, offset, limit } = req.query;
+    const { customerId, gameId, offset, limit, order, desc } = req.query;
 
     try {
 
@@ -51,7 +51,7 @@ export async function rentsGet(req, res) {
         if (typeof order !== 'undefined' && order !== '') {
 
             // todas as colunas válidas para ordenação
-            const validColumns = ['name', 'id', 'cpf','customerId', 'customer', 'game'];
+            const validColumns = ['name', 'id', 'cpf', 'customerId', 'customer', 'game'];
             if (validColumns.includes(order)) {
                 queryParams.push(order);
 
@@ -60,8 +60,8 @@ export async function rentsGet(req, res) {
                 query += ` ORDER BY $${orderParam} ASC`;
                 // verificando se é ordem descendente (desc)
                 if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
-                    query += ' DESC';
-                };
+                    query += ` DESC`;
+                }
             } else {
                 res.status(400).send('Parâmetro de ordenação inválido.');
                 return;
