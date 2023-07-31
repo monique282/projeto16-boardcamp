@@ -127,8 +127,8 @@ export async function rentsGet(req, res) {
         res.send(updatedData);
 
     } catch (err) {
-        return res.status(500).send("Erro ao processar a solicitação de aluguéis. Por favor, tente novamente mais tarde.");
-
+        return res.sendStatus(500);
+        //return res.status(500).send("Erro ao processar a solicitação de aluguéis. Por favor, tente novamente mais tarde.");
     };
 };
 
