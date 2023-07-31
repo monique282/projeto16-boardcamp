@@ -9,45 +9,57 @@ import dayjs from 'dayjs';
 export async function rentsGet(req, res) {
 
     // pegando os dados pelo query
-    const { customerId, gameId } = req.query
+    const { customerId, gameId, offset, limit } = req.query
 
     try {
-        let rentsRequest = [];
 
-        // testando se os dados do query são validos
-        // vendo pelo customerId
+        let query = `SELECT rentals.* , 
+        json_build_object('id', customers.id, 'name',customers.name) AS customer, 
+        json_build_object('id', games.id, 'name',games.name) AS game
+        FROM rentals
+        JOIN customers ON rentals."customerId" = customers.id
+        JOIN games ON rentals."gameId" = games.id';
+        const queryParams = [];`
+
+        // Verificando os parâmetros enviados pela query são validos
+        // verificando se name é valido
         if (typeof customerId !== 'undefined' && customerId !== '') {
-            rentsRequest = await db.query(`SELECT rentals.* , 
-            json_build_object('id', customers.id, 'name',customers.name) AS customer, 
-            json_build_object('id', games.id, 'name',games.name) AS game
-            FROM rentals
-            JOIN customers ON rentals."customerId" = customers.id
-            JOIN games ON rentals."gameId" = games.id
-            WHERE "customerId"= $1;`, [customerId]);
-        } else
+            queryParams.push([customerId]);
+            query += ' WHERE  "customerId"= $1 ';
+        };
 
-            // vendo pelo gameId
-            if (typeof gameId !== 'undefined' && gameId !== '') {
-                rentsRequest = await db.query(`SELECT rentals.* , 
-            json_build_object('id', customers.id, 'name',customers.name) AS customer, 
-            json_build_object('id', games.id, 'name',games.name) AS game
-            FROM rentals
-            JOIN customers ON rentals."customerId" = customers.id
-            JOIN games ON rentals."gameId" = games.id
-            WHERE "gameId"= $1 ;`, [gameId]);
+        if (typeof gameId !== 'undefined' && gameId !== '') {
+            queryParams.push([gameId]);
+            query += ' WHERE  "gameId"= $1 ';
+        };
+
+        // verificando de offset é valido
+        if (typeof offset !== 'undefined' && offset !== '') {
+            queryParams.push(offset);
+            if (queryParams.length === 1) {
+                query += ' OFFSET $1';
+            } else {
+                query += ' OFFSET $2';
             }
+        };
 
-            // por nenhum dos dois
-            else {
-                rentsRequest = await db.query(`SELECT rentals.* , 
-            json_build_object('id', customers.id, 'name',customers.name) AS customer, 
-            json_build_object('id', games.id, 'name',games.name) AS game
-            FROM rentals
-            JOIN customers ON rentals."customerId" = customers.id
-            JOIN games ON rentals."gameId" = games.id;`);
-            };
+        //verificando se limit é valido
+        if (typeof limit !== 'undefined' && limit !== '') {
+            queryParams.push(limit);
+            if (queryParams.length === 1) {
+                query += ' LIMIT $1';
+            } else
+                if (queryParams.length === 2) {
+                    query += ' LIMIT $2';
+                } else {
+                    query += ' LIMIT $3';
+                }
+        };
 
+        // juntando tudo para linha ficar de modo correto
+        const result = await db.query(query, queryParams);
 
+        // tratando a data para vim no formato correto
         const updatedData = rentsRequest.rows.map(date => {
             if (date.returnDate !== null) {
                 const dateCorretCrient = new Date(date.rentDate);
