@@ -37,20 +37,6 @@ export async function rentsGet(req, res) {
             conditions.push(`"gameId" = $${queryParams.length}`);
         };
 
-        // verificando se offset é valido
-        if (typeof offset !== 'undefined' && offset !== '') {
-            queryParams.push(offset);
-            conditions.push(` OFFSET $` + queryParams.length);
-            // query += ' OFFSET $' + queryParams.length;
-        };
-
-        // verificando se limit é valido
-        if (typeof limit !== 'undefined' && limit !== '') {
-            queryParams.push(limit);
-            conditions.push(` LIMIT $` + queryParams.length);
-           // conditions.push(` LIMIT $${queryParams.length}`);
-        };
-
         // ordenação
         if (typeof order !== 'undefined' && order !== '') {
             const validColumns = ['id', "customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee"];
@@ -97,6 +83,21 @@ export async function rentsGet(req, res) {
             query += ' WHERE ' + conditions.join(' AND ');
         }
 
+        // verificando se offset é valido
+        if (typeof offset !== 'undefined' && offset !== '') {
+            queryParams.push(offset);
+            //conditions.push(` OFFSET $` + queryParams.length);
+            query += ' OFFSET $' + queryParams.length;
+        };
+
+        // verificando se limit é valido
+        if (typeof limit !== 'undefined' && limit !== '') {
+            queryParams.push(limit);
+            query += ' OFFSET $' + queryParams.length;
+            //conditions.push(` LIMIT $` + queryParams.length);
+           // conditions.push(` LIMIT $${queryParams.length}`);
+        };
+
         // juntando tudo para linha ficar de modo correto
         const result = await db.query(query, queryParams);
 
@@ -129,6 +130,7 @@ export async function rentsGet(req, res) {
     } catch (err) {
         return res.sendStatus(500);
         //return res.status(500).send("Erro ao processar a solicitação de aluguéis. Por favor, tente novamente mais tarde.");
+
     };
 };
 
