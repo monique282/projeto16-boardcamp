@@ -40,13 +40,13 @@ export async function rentsGet(req, res) {
         // verificando se offset é valido
         if (typeof offset !== 'undefined' && offset !== '') {
             queryParams.push(offset);
-            conditions.push(`OFFSET $${queryParams.length}`);
+            conditions.push(` OFFSET $${queryParams.length}`);
         };
 
         // verificando se limit é valido
         if (typeof limit !== 'undefined' && limit !== '') {
             queryParams.push(limit);
-            conditions.push(`LIMIT $${queryParams.length}`);
+            conditions.push(` LIMIT $${queryParams.length}`);
         };
 
         // ordenação
