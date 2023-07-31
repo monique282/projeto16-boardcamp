@@ -27,7 +27,7 @@ export async function gameGet(req, res) {
             if (queryParams.length === 1) {
                 query += ' OFFSET $1';
             } else {
-                query += ' AND OFFSET $2';
+                query += ' OFFSET $2';
             }
         };
 
