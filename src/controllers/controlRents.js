@@ -10,7 +10,7 @@ export async function rentsGet(req, res) {
 
     // pegando os dados pelo query
     const { customerId, gameId, offset, limit, order, desc } = req.query;
-    
+
 
 
     try {
@@ -51,15 +51,15 @@ export async function rentsGet(req, res) {
         // ordenação
         //verificando se order é valido
         if (typeof order !== 'undefined' && order !== '') {
-            
+
             // todas as colunas válidas para ordenação
-            const validColumns = [ 'id', 'customerId', 'customer', 'game'];
+            const validColumns = ['id', "customerId", "gameId","rentDate", "daysRented", "returnDate", "originalPrice", "delayFee"];
             if (validColumns.includes(order)) {
 
                 // adiciona o parâmetro de ordenação
                 query += ' ORDER BY ' + order;
-        
-                 //se desc for true adicione DESC à consulta
+
+                //se desc for true adicione DESC à consulta
                 if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
                     console.log("ate aqui desc")
                     query += ' DESC';
@@ -96,7 +96,7 @@ export async function rentsGet(req, res) {
                 };
             };
         });
-        
+
         res.send(updatedData);
 
     } catch (err) {
