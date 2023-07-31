@@ -39,7 +39,7 @@ export async function customersGet(req, res) {
         if (typeof order !== 'undefined' && order !== '') {
 
             // todas as colunas válidas para ordenação
-            const validColumns = ['name', 'id', 'cpf', 'phone'];
+            const validColumns = ['name', 'id', 'cpf', 'phone', 'birthday'];
             if (validColumns.includes(order)) {
 
                 // adiciona o parâmetro de ordenação
