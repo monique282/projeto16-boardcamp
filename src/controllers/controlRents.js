@@ -1,7 +1,6 @@
 // esse arquivo aqui serve para executar todas as funções que eu preciso
 // esse arquivo é chamado la em rentsRoutes
 
-import { query } from "express";
 import { db } from "../database/db.js";
 import dayjs from 'dayjs';
 
@@ -10,8 +9,6 @@ export async function rentsGet(req, res) {
 
     // pegando os dados pelo query
     const { customerId, gameId, offset, limit, order, desc, status, startDate } = req.query;
-
-
 
     try {
 
@@ -24,94 +21,77 @@ export async function rentsGet(req, res) {
         JOIN games ON rentals."gameId" = games.id
         `;
 
-        // Verificando os parâmetros enviados pela query são validos
-        // verificando se name é valido
+        // criando o array de condições
+        const conditions = [];
+
+        // verificando os parametros enviados pela query são validos
+        // verificando se customerId é valido
         if (typeof customerId !== 'undefined' && customerId !== '') {
             queryParams.push(customerId);
-            query += ' WHERE  "customerId"= $1 ';
+            conditions.push(`"customerId" = $${queryParams.length}`);
         };
 
-        // verificando de gameId é valido
+        // verificando se gameId é valido
         if (typeof gameId !== 'undefined' && gameId !== '') {
             queryParams.push(gameId);
-            query += ' WHERE  "gameId"= $1 ';
+            conditions.push(`"gameId" = $${queryParams.length}`);
         };
 
-        // verificando de offset é valido
+        // verificando se offset é valido
         if (typeof offset !== 'undefined' && offset !== '') {
             queryParams.push(offset);
-            query += ' OFFSET $' + queryParams.length;
+            conditions.push(`OFFSET $${queryParams.length}`);
         };
 
-        //verificando se limit é valido
+        // verificando se limit é valido
         if (typeof limit !== 'undefined' && limit !== '') {
             queryParams.push(limit);
-            query += ' LIMIT $' + queryParams.length;
+            conditions.push(`LIMIT $${queryParams.length}`);
         };
 
         // ordenação
-        //verificando se order é valido
         if (typeof order !== 'undefined' && order !== '') {
-
-            // todas as colunas válidas para ordenação
             const validColumns = ['id', "customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee"];
-            console.log(order);
             if (validColumns.includes(order)) {
+                query += ` ORDER BY "${order}"`;
 
-                // adiciona o parâmetro de ordenação
-                query += ' ORDER BY "' + order + '"'
-
-                //se desc for true adicione DESC à consulta
                 if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
-
-                    query += ' DESC ;'
-                }
+                    query += ' DESC';
+                };
             } else {
-                res.status(400).send('Parâmetro de ordenação inválido.');
-                return;
-            }
-        }
-
-        // selecioando por startDate
-    if (typeof startDate !== 'undefined' && startDate !== '') {
-        const startDateValue = new Date(startDate);
-        if (isNaN(startDateValue)) {
-            res.status(400).send('Formato de data inválido para startDate.');
-            return;
-        }
-
-        // Convertendo a data para o formato ISO (YYYY-MM-DD) para uso na consulta SQL
-        const formattedStartDate = startDateValue.toISOString().split('T')[0];
-
-        if (queryParams.length > 0) {
-            query += ` AND "rentDate" >= '${formattedStartDate}'`;
-        } else {
-            query += ` WHERE "rentDate" >= '${formattedStartDate}'`;
-        }
-    };
-     // filtrando por data
-        // criando uma constante com as rotas
-        const statusFilters = {
-            open: ' "returnDate" IS NULL',
-            closed: ' "returnDate" IS NOT NULL'
+                return res.status(400).send('Parâmetro de ordenação inválido.');
+            };
         };
 
-        //verificando se status é valido
-        // selecioando por status
-        if (typeof status !== 'undefined' && status in statusFilters) {
-            if (queryParams.length > 0) {
-                query += ` AND ${statusFilters[status]}`;
-            } else {
-                query += ` WHERE ${statusFilters[status]}`;
+        // filtragem por data
+        if (typeof startDate !== 'undefined' && startDate !== '') {
+            const startDateValue = new Date(startDate);
+            if (isNaN(startDateValue)) {
+                res.status(400).send('Formato de data inválido para startDate.');
+                return;
             }
+
+            // convertendo a data para o formato valido
+            const formattedStartDate = startDateValue.toISOString().split('T')[0];
+            queryParams.push(formattedStartDate);
+            conditions.push(`"rentDate" >= $${queryParams.length}`);
+        }
+
+        // filtragem por status
+        if (typeof status !== 'undefined' && status in statusFilters) {
+            conditions.push(statusFilters[status]);
         } else if (typeof status !== 'undefined') {
             return res.status(400).send('Parâmetro de status inválido.');
-            
+        }
+
+        // montando a consulta final
+        if (conditions.length > 0) {
+            query += ' WHERE ' + conditions.join(' AND ');
         }
 
         // juntando tudo para linha ficar de modo correto
         const result = await db.query(query, queryParams);
-        console.log(query);
+
         // tratando a data para vim no formato correto
         const updatedData = result.rows.map(date => {
             if (date.returnDate !== null) {
