@@ -10,6 +10,8 @@ export async function rentsGet(req, res) {
 
     // pegando os dados pelo query
     const { customerId, gameId, offset, limit, order, desc } = req.query;
+    
+
 
     try {
 

@@ -8,7 +8,7 @@ export async function gameGet(req, res) {
 
     // pegando os dados por query
     const { name, offset, limit, order, desc } = req.query;
-
+   
     try {
 
         let query = 'SELECT * FROM games';
@@ -45,7 +45,7 @@ export async function gameGet(req, res) {
 
                 // adiciona o parâmetro de ordenação e coloca na posição sua posição no array
                 const orderParam = queryParams.length;
-                query += ` ORDER BY $${orderParam} `;
+                query += ` ORDER BY $${orderParam}`;
                 // verificando se é ordem descendente (desc)
                 if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
                     query += ' DESC';
