@@ -41,13 +41,13 @@ export async function gameGet(req, res) {
             // todas as colunas válidas para ordenação
             const validColumns = ['name', 'id'];
             if (validColumns.includes(order)) {
-                queryParams.push(order);
 
-                // adiciona o parâmetro de ordenação e coloca na posição sua posição no array
-                const orderParam = queryParams.length;
-                query += ` ORDER BY $${orderParam}`;
-                // verificando se é ordem descendente (desc)
+                // adiciona o parâmetro de ordenação
+                query += ' ORDER BY ' + order;
+        
+                //se desc for true adicione DESC à consulta
                 if (typeof desc !== 'undefined' && desc.toLowerCase() === 'true') {
+                    console.log("ate aqui desc")
                     query += ' DESC';
                 }
             } else {
