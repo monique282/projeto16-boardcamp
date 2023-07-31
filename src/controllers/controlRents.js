@@ -77,6 +77,12 @@ export async function rentsGet(req, res) {
             conditions.push(`"rentDate" >= $${queryParams.length}`);
         }
 
+        // criando uma constante com as rotas
+        const statusFilters = {
+            open: ' "returnDate" IS NULL',
+            closed: ' "returnDate" IS NOT NULL'
+        };
+        
         // filtragem por status
         if (typeof status !== 'undefined' && status in statusFilters) {
             conditions.push(statusFilters[status]);
