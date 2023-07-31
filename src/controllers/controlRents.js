@@ -72,28 +72,8 @@ export async function rentsGet(req, res) {
             }
         }
 
-        // filtrando por data
-        // criando uma constante com as rotas
-        const statusFilters = {
-            open: '"returnDate" IS NULL',
-            closed: '"returnDate" IS NOT NULL'
-        };
-
-        //verificando se status é valido
-        // selecioando por status
-        if (typeof status !== 'undefined' && status in statusFilters) {
-            if (queryParams.length > 0) {
-                query += ` AND ${statusFilters[status]}`;
-            } else {
-                query += ` WHERE ${statusFilters[status]}`;
-            }
-        } else if (typeof status !== 'undefined') {
-            res.status(400).send('Parâmetro de status inválido.');
-            return;
-        }
-
         // selecioando por startDate
-    if (typeof startDate !== 'undefined') {
+    if (typeof startDate !== 'undefined' && startDate !== '') {
         const startDateValue = new Date(startDate);
         if (isNaN(startDateValue)) {
             res.status(400).send('Formato de data inválido para startDate.');
@@ -108,7 +88,26 @@ export async function rentsGet(req, res) {
         } else {
             query += ` WHERE "rentDate" >= '${formattedStartDate}'`;
         }
-    }
+    };
+     // filtrando por data
+        // criando uma constante com as rotas
+        const statusFilters = {
+            open: ' "returnDate" IS NULL',
+            closed: ' "returnDate" IS NOT NULL'
+        };
+
+        //verificando se status é valido
+        // selecioando por status
+        if (typeof status !== 'undefined' && status in statusFilters) {
+            if (queryParams.length > 0) {
+                query += ` AND ${statusFilters[status]}`;
+            } else {
+                query += ` WHERE ${statusFilters[status]}`;
+            }
+        } else if (typeof status !== 'undefined') {
+            return res.status(400).send('Parâmetro de status inválido.');
+            
+        }
 
         // juntando tudo para linha ficar de modo correto
         const result = await db.query(query, queryParams);

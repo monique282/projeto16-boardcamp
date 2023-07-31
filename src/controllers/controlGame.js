@@ -60,7 +60,8 @@ export async function gameGet(req, res) {
         const gameRequest = result.rows;
         res.send(gameRequest);
     } catch (err) {
-        res.status(500).send(err.message);
+        res.status(500).send("Erro ao processar a solicitação. Por favor, tente novamente mais tarde.");
+
     };
 };
 
@@ -95,6 +96,6 @@ export async function gamePost(req, res) {
         return res.sendStatus(201);
 
     } catch (err) {
-        res.status(500).send(err.message);
+        res.status(500).send("Erro ao cadastrar o jogo. Por favor, verifique os dados e tente novamente.");
     };
 };
