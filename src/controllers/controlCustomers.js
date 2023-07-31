@@ -12,7 +12,7 @@ export async function customersGet(req, res) {
 
     try {
 
-        let query = 'SELECT * FROM costomers';
+        let query = 'SELECT * FROM customers';
         const queryParams = [];
 
         // Verificando os parâmetros enviados pela query são validos
@@ -45,9 +45,11 @@ export async function customersGet(req, res) {
                 }
         };
 
+        console.log(queryParams);
+
         // juntando tudo para linha ficar de modo correto
         const result = await db.query(query, queryParams);
-
+        console.log(result.rows);
         // tratando a data para vim no formato correto
         const updatedData = result.rows.map(date => {
             const dateCorret = new Date(date.birthday);
